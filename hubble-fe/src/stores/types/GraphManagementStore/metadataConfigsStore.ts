@@ -34,12 +34,15 @@ export type VertexTypePropertyIndex = {
 export type VertexTypeStyle = {
   icon: string | null;
   color: string | null;
+  size: string | null;  
+  display_fields: string[];  
 };
 
 export type VertexTypeValidateFields =
   | 'name'
   | 'properties'
   | 'primaryKeys'
+  | 'displayFeilds'
   | 'propertyIndexes';
 
 export type VertexTypeValidatePropertyIndexes = {
@@ -55,6 +58,8 @@ export interface EditVertexTypeParams {
   style: {
     color: string | null;
     icon: null;
+    size: string | null;  
+    display_fields: string[];  
   };
 }
 
@@ -93,7 +98,16 @@ export interface ReCheckedReusableData {
 
 type EdgeTypeProperty = VertexTypeProperty;
 type EdgeTypePropertyIndex = VertexTypePropertyIndex;
-type EdgeTypeStyle = VertexTypeStyle;
+// type EdgeTypeStyle = VertexTypeStyle;
+
+type EdgeTypeStyle = {
+  icon: string | null;
+  color: string | null;
+  with_arrow : boolean | null;
+  thickness: string | null;
+  display_fields: string[];
+};
+
 
 export type EdgeTypeValidateFields =
   | 'name'
@@ -101,11 +115,26 @@ export type EdgeTypeValidateFields =
   | 'targetLabel'
   | 'properties'
   | 'sortKeys'
-  | 'propertyIndexes';
+  | 'propertyIndexes'
+  | 'displayFeilds';
 
 export type EdgeTypeValidatePropertyIndexes = VertexTypeValidatePropertyIndexes;
 
-export interface EditEdgeTypeParams extends EditVertexTypeParams {}
+// export interface EditEdgeTypeParams extends EditVertexTypeParams {}
+
+export interface EditEdgeTypeParams {
+  append_properties: VertexTypeProperty[];
+  append_property_indexes: VertexTypePropertyIndex[];
+  remove_property_indexes: string[];
+  style: {
+    color: string | null;
+    icon: null;
+    with_arrow: boolean | null;
+    thickness: string | null;
+    display_fields: string[];
+  };
+}
+
 
 export interface EdgeType {
   name: string;

@@ -69,8 +69,13 @@ export class DataAnalyzeStore {
   @observable.ref valueTypes: Record<string, string> = {};
   @observable.ref colorSchemas: ColorSchemas = {};
   @observable.ref colorList: string[] = [];
-  @observable.ref colorMappings: Record<string, string> = {};
-  @observable.ref edgeColorMappings: Record<string, string> = {};
+  @observable.ref vertexColorMappings: Record<string, string> = {};  
+  @observable.ref vertexSizeMappings: Record<string, string> = {}; 
+  @observable.ref vertexWritingMappings: Record<string, string[]> = {}; 
+  @observable.ref edgeColorMappings: Record<string, string> = {}; 
+  @observable.ref edgeWithArrowMappings: Record<string, boolean> = {}; 
+  @observable.ref edgeThicknessMappings: Record<string, string> = {}; 
+  @observable.ref edgeWritingMappings: Record<string, string[]> = {}; 
   @observable.ref
   originalGraphData: FetchGraphReponse = {} as FetchGraphReponse;
   @observable.ref graphData: FetchGraphReponse = {} as FetchGraphReponse;
@@ -141,8 +146,8 @@ export class DataAnalyzeStore {
     fetchValueTypes: 'standby',
     fetchColorSchemas: 'standby',
     fetchColorList: 'standby',
-    fetchAllNodeColors: 'standby',
-    fetchAllEdgeColors: 'standby',
+    fetchAllNodeStyle: 'standby',
+    fetchAllEdgeStyle: 'standby',  
     fetchGraphs: 'standby',
     expandGraphNode: 'standby',
     filteredGraphData: 'standby',
@@ -172,11 +177,11 @@ export class DataAnalyzeStore {
       code: NaN,
       message: ''
     },
-    fetchAllNodeColors: {
+    fetchAllNodeStyle: {  
       code: NaN,
       message: ''
     },
-    fetchAllEdgeColors: {
+    fetchAllEdgeStyle: {  
       code: NaN,
       message: ''
     },
@@ -225,10 +230,34 @@ export class DataAnalyzeStore {
   @computed get graphNodes(): GraphNode[] {
     return this.originalGraphData.data.graph_view.vertices.map(
       ({ id, label, properties }) => {
+        let arr = Object.entries(this.vertexWritingMappings[label]).map(([key, value]) => {
+          return `${value}`
+        }); 
+        let cloneProperties = {...properties};
+        cloneProperties['顶点ID'] = id;
+        let labelWords = '';
+        let flag = true;
+        for(let item of arr){
+          if(cloneProperties[item]){ 
+            if(flag){
+              labelWords += cloneProperties[item];
+              flag = false;
+              continue;
+            }
+            labelWords += '-' + cloneProperties[item];
+          }
+        }
+
         return {
           id,
-          label: id.length <= 15 ? id : id.slice(0, 15) + '...',
-          vLabel: label,
+          label: labelWords.length <= 15 ? labelWords : labelWords.slice(0, 15) + '...',
+          vLabel: id.length <= 15 ? id : id.slice(0, 15) + '...',
+          //原： 8 6 4 3 2
+          value:  (this.vertexSizeMappings[label] == 'HUGE') ? 40: 
+                  (this.vertexSizeMappings[label] == 'BIG') ? 30:
+                  (this.vertexSizeMappings[label] == 'NORMAL') ? 20:
+                  (this.vertexSizeMappings[label] == 'SMALL') ? 10:
+                   1,
           properties,
           title: `
               <div class="tooltip-fields">
@@ -249,8 +278,8 @@ export class DataAnalyzeStore {
                 .join('')}
           `,
           color: {
-            background: this.colorMappings[label] || '#5c73e6',
-            border: this.colorMappings[label] || '#5c73e6',
+            background: this.vertexColorMappings[label] || '#5c73e6',
+            border: this.vertexColorMappings[label] || '#5c73e6',
             highlight: { background: '#fb6a02', border: '#fb6a02' },
             hover: { background: '#ec3112', border: '#ec3112' }
           },
@@ -259,7 +288,7 @@ export class DataAnalyzeStore {
               values: any,
               id: string,
               selected: boolean,
-              hovering: boolean
+              hovering: boolean,
             ) {
               if (hovering || selected) {
                 values.shadow = true;
@@ -280,32 +309,62 @@ export class DataAnalyzeStore {
   }
 
   @computed get graphEdges(): GraphEdge[] {
-    return this.originalGraphData.data.graph_view.edges.map(edge => ({
-      ...edge,
-      from: edge.source,
-      to: edge.target,
-      font: {
-        color: '#666'
-      },
-      title: `
-        <div class="tooltip-fields">
-          <div>边类型：</div>
-          <div>${edge.label}</div>
-        </div>
-        <div class="tooltip-fields">
-          <div>边ID：</div>
-          <div>${edge.id}</div>
-        </div>
-        ${Object.entries(edge.properties)
-          .map(([key, value]) => {
-            return `<div class="tooltip-fields">
-                      <div>${key}: </div>
-                      <div>${value}</div>
-                    </div>`;
-          })
-          .join('')}
-      `
-    }));
+    return this.originalGraphData.data.graph_view.edges.map(({id, label, source, target, properties}) => {
+      let arr = Object.entries(this.edgeWritingMappings[label]).map(([key, value]) => {
+        return `${value}`
+      }); 
+      let cloneProperties = {...properties};
+      cloneProperties['边类型'] = label;
+      
+      let labelWords = '';
+      let flag = true;
+      for(let item of arr){
+        if(cloneProperties[item]){ 
+          if(flag){
+            labelWords += cloneProperties[item];
+            flag = false;
+            continue;
+          }
+          labelWords += '-' + cloneProperties[item];
+        }
+      }
+
+      return {
+        id,
+        label: labelWords.length <= 15 ? labelWords : labelWords.slice(0, 15) + '...',
+        properties,
+        source,
+        target,
+        from: source,
+        to: target,
+        font: { color: '#666'},
+        arrows: this.edgeWithArrowMappings[label] === true ? 'to' : '',
+        color: this.edgeColorMappings[label],
+        //原：8 4 2
+        value: this.edgeThicknessMappings[label] === 'THICK' ? 5 :
+          this.edgeThicknessMappings[label] === 'NORMAL' ? 3 :
+          1,
+          title: `
+                  <div class="tooltip-fields">
+                    <div>边类型：</div>
+                  <div>${label}</div>
+                  </div>
+                  <div class="tooltip-fields">
+                    <div>边ID：</div>
+                    <div>${id}</div>
+                  </div>
+                ${Object.entries(properties)
+                    .map(([key, value]) => {
+                      return `<div class="tooltip-fields">
+                                <div>${key}: </div>
+                                <div>${value}</div>
+                              </div>`;
+                    })
+                    .join('')}
+                `
+
+      }
+    })
   }
 
   @action
@@ -546,8 +605,8 @@ export class DataAnalyzeStore {
       fetchColorSchemas: 'standby',
       fetchColorList: 'standby',
       fetchGraphs: 'standby',
-      fetchAllNodeColors: 'standby',
-      fetchAllEdgeColors: 'standby',
+      fetchAllNodeStyle: 'standby', 
+      fetchAllEdgeStyle: 'standby',  
       expandGraphNode: 'standby',
       filteredGraphData: 'standby',
       fetchRelatedVertex: 'standby',
@@ -576,11 +635,11 @@ export class DataAnalyzeStore {
         code: NaN,
         message: ''
       },
-      fetchAllNodeColors: {
+      fetchAllNodeStyle: {
         code: NaN,
         message: ''
       },
-      fetchAllEdgeColors: {
+      fetchAllEdgeStyle: {
         code: NaN,
         message: ''
       },
@@ -740,10 +799,10 @@ export class DataAnalyzeStore {
     }
   });
 
-  fetchAllNodeColors = flow(function* fetchAllNodeColors(
+  fetchAllNodeStyle = flow(function* fetchAllNodeStyle(  
     this: DataAnalyzeStore
   ) {
-    this.requestStatus.fetchAllNodeColors = 'pending';
+    this.requestStatus.fetchAllEdgeStyle = 'pending';
 
     try {
       const result: AxiosResponse<
@@ -761,22 +820,27 @@ export class DataAnalyzeStore {
 
       result.data.data.records.forEach(({ name, style }) => {
         if (style.color !== null) {
-          this.colorMappings[name] = style.color;
+          this.vertexColorMappings[name] = style.color;
+        }
+        if (style.size !== null) {
+          this.vertexSizeMappings[name] = style.size;
+        }
+        if (style.display_fields.length !== 0) {
+          this.vertexWritingMappings[name] = style.display_fields;
         }
       });
-
-      this.requestStatus.fetchAllNodeColors = 'success';
+      this.requestStatus.fetchAllNodeStyle = 'success';
     } catch (error) {
-      this.requestStatus.fetchAllNodeColors = 'failed';
-      this.errorInfo.fetchAllNodeColors.message = error.message;
+      this.requestStatus.fetchAllNodeStyle = 'failed';
+      this.errorInfo.fetchAllNodeStyle.message = error.message;
       console.error(error.message);
     }
   });
 
-  fetchAllEdgeColors = flow(function* fetchAllEdgeColors(
+  fetchAllEdgeStyle = flow(function* fetchAllEdgeStyle( 
     this: DataAnalyzeStore
   ) {
-    this.requestStatus.fetchAllEdgeColors = 'pending';
+    this.requestStatus.fetchAllEdgeStyle = 'pending';
 
     try {
       const result: AxiosResponse<
@@ -794,14 +858,28 @@ export class DataAnalyzeStore {
 
       result.data.data.records.forEach(({ name, style }) => {
         if (style.color !== null) {
-          this.edgeColorMappings[name] = style.color;
+          this.edgeColorMappings[name] = style.color; 
+        }
+        if (style.with_arrow !== null) {
+          this.edgeWithArrowMappings[name] = style.with_arrow; 
+        }
+        if (style.thickness !== null) {
+          this.edgeThicknessMappings[name] = style.thickness; 
+        }
+        if (style.display_fields.length !== 0) {
+          for(let i = 0; i < style.display_fields.length; i ++){
+            if(style.display_fields[i] === "~id"){
+              style.display_fields[i] = "边类型";
+            }
+          }
+          this.edgeWritingMappings[name] = style.display_fields;
         }
       });
 
-      this.requestStatus.fetchAllEdgeColors = 'success';
+      this.requestStatus.fetchAllEdgeStyle = 'success';
     } catch (error) {
-      this.requestStatus.fetchAllEdgeColors = 'failed';
-      this.errorInfo.fetchAllEdgeColors.message = error.message;
+      this.requestStatus.fetchAllEdgeStyle = 'failed';
+      this.errorInfo.fetchAllEdgeStyle.message = error.message;
       console.error(error.message);
     }
   });

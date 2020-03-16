@@ -65,8 +65,8 @@ const MetadataConfig: React.FC = observer(() => {
       appStore.setCurrentId(Number(params.id));
       // fetch node colors
       dataAnalyzeStore.setCurrentId(Number(params.id));
-      dataAnalyzeStore.fetchAllNodeColors();
-      dataAnalyzeStore.fetchAllEdgeColors();
+      dataAnalyzeStore.fetchAllNodeStyle();
+      dataAnalyzeStore.fetchAllEdgeStyle();
       metadataConfigRootStore.setCurrentId(Number(params.id));
       metadataConfigRootStore.fetchIdList();
     }

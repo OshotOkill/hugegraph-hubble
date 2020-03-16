@@ -33,6 +33,7 @@ import LoadingBackIcon from '../../../../assets/imgs/ic_loading_back.svg';
 import LoadingFrontIcon from '../../../../assets/imgs/ic_loading_front.svg';
 import './VertexTypeList.less';
 import { VertexTypeValidatePropertyIndexes } from '../../../../stores/types/GraphManagementStore/metadataConfigsStore';
+// import { DataAnalyzeStoreContext } from '../../../../stores';
 
 const styles = {
   button: {
@@ -62,6 +63,7 @@ const propertyIndexTypeMappings: Record<string, string> = {
 };
 
 const VertexTypeList: React.FC = observer(() => {
+  // const dataAnalyzeStore = useContext(DataAnalyzeStoreContext);
   const metadataConfigsRootStore = useContext(MetadataConfigsRootStore);
   const { metadataPropertyStore, vertexTypeStore } = metadataConfigsRootStore;
   const [preLoading, switchPreLoading] = useState(true);
@@ -686,12 +688,18 @@ const VertexTypeList: React.FC = observer(() => {
                     <span>顶点类型名称：</span>
                   </div>
                   {vertexTypeStore.selectedVertexType!.name}
+                </div>
+                  <div className="metadata-drawer-options">
+                  <div className="metadata-drawer-options-name">
+                    <span style={{lineHeight: 2.4}}>顶点样式：</span>
+                  </div>
                   <div className="new-vertex-type-options-colors">
-                    <Select
+                    <Select   
                       width={66}
                       size="medium"
                       showSearch={false}
                       disabled={!isEditVertex}
+                      style={{width: 300}}
                       value={
                         vertexTypeStore.editedSelectedVertexType.style.color !==
                         null
@@ -703,25 +711,75 @@ const VertexTypeList: React.FC = observer(() => {
                           ...vertexTypeStore.editedSelectedVertexType,
                           style: {
                             color: value,
-                            icon: null
+                            icon: null,
+                            display_fields: vertexTypeStore.editedSelectedVertexType.style.display_fields.length !== 0
+                            ? vertexTypeStore.editedSelectedVertexType.style.display_fields
+                            : vertexTypeStore.selectedVertexType!.style.display_fields,
+                            size: vertexTypeStore.editedSelectedVertexType.style.size !==
+                            null
+                              ? vertexTypeStore.editedSelectedVertexType.style.size
+                              : vertexTypeStore.selectedVertexType!.style.size
                           }
                         });
                       }}
                     >
-                      {vertexTypeStore.colorSchemas.map((color: string) => (
-                        <Select.Option value={color} key={color}>
+                      {vertexTypeStore.colorSchemas.map((color: string, index: number) => (
+                        <Select.Option value={color} key={color} style={{display:"inline-block", marginLeft: index%5 === 0 ? 10 : 0, marginTop: index < 5 ? 12 : 6, marginBottom: index >= 15 ? 8 : 0}}>
                           <div
                             className="new-vertex-type-options-color"
                             style={{
                               background: color,
-                              marginTop: 6
+                              marginTop: 5,
                             }}
                           ></div>
                         </Select.Option>
                       ))}
                     </Select>
+                    </div>
+                    <div className="new-vertex-type-options-colors">
+                    <Select   
+                      width={67}
+                      size="medium"
+                      showSearch={false}
+                      disabled={!isEditVertex}
+                      value={
+                        vertexTypeStore.editedSelectedVertexType.style.size !==
+                        null
+                          ? vertexTypeStore.editedSelectedVertexType.style.size
+                          : vertexTypeStore.selectedVertexType!.style.size
+                      }
+                      onChange={(value: string) => {
+                        vertexTypeStore.mutateEditedSelectedVertexType({
+                          ...vertexTypeStore.editedSelectedVertexType,
+                          style: {
+                            color: vertexTypeStore.editedSelectedVertexType.style.color !==
+                            null
+                              ? vertexTypeStore.editedSelectedVertexType.style.color.toLowerCase()
+                              : vertexTypeStore.selectedVertexType!.style.color!.toLowerCase(),
+                            icon: null,
+                            display_fields: vertexTypeStore.editedSelectedVertexType.style.display_fields.length !== 0
+                            ? vertexTypeStore.editedSelectedVertexType.style.display_fields
+                            : vertexTypeStore.selectedVertexType!.style.display_fields,
+                            size: value
+                          }
+                        });
+                      }}
+                    >
+                      {vertexTypeStore.vertexSizeSchemas.map((value, index) => (
+                        <Select.Option value={value.en} key={value.en} style={{width: 66}}>
+                          <div
+                            className="new-vertex-type-options-color"
+                            style={{
+                              marginTop: 5
+                            }}
+                            >{value.ch}</div>
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </div>
                 </div>
+
+
                 <div className="metadata-drawer-options">
                   <div className="metadata-drawer-options-name">
                     <span>关联属性：</span>
@@ -731,7 +789,7 @@ const VertexTypeList: React.FC = observer(() => {
                       <span>属性</span>
                       <span>允许为空</span>
                     </div>
-                    {vertexTypeStore.selectedVertexType!.properties.map(
+                    {vertexTypeStore.selectedVertexType!.properties.map( 
                       ({ name, nullable }) => (
                         <div
                           className="metadata-drawer-options-list-row"
@@ -751,7 +809,7 @@ const VertexTypeList: React.FC = observer(() => {
                       )
                     )}
                     {isEditVertex &&
-                      vertexTypeStore.editedSelectedVertexType.append_properties.map(
+                      vertexTypeStore.editedSelectedVertexType.append_properties.map( 
                         ({ name }) => (
                           <div
                             className="metadata-drawer-options-list-row"
@@ -846,7 +904,7 @@ const VertexTypeList: React.FC = observer(() => {
                                         })
                                       }
                                     );
-                                  }}
+                                  }}  
                                 >
                                   {property.name}
                                 </Checkbox>
@@ -873,7 +931,82 @@ const VertexTypeList: React.FC = observer(() => {
                   </div>
                   {vertexTypeStore.selectedVertexType!.primary_keys.join(';')}
                 </div>
+                {/* <div className={metadataDrawerOptionClass}> 
+                  </div> */}
+                  <div className="metadata-drawer-options">
+                <div className="metadata-drawer-options-name">
+                  <span>顶点展示内容：</span>
+                </div>
+                { isEditVertex ? <Select
+                  style={{marginTop: -4}}
+                  width={420}
+                  mode="multiple"
+                  size="medium"
+                  showSearch={false}
+                  disabled={!isEditVertex}
+                  onChange={(value: string[]) => { 
+                    vertexTypeStore.mutateEditedSelectedVertexType({
+                      ...vertexTypeStore.editedSelectedVertexType, 
+                      style: {
+                        color: vertexTypeStore.editedSelectedVertexType.style.color !==
+                        null
+                          ? vertexTypeStore.editedSelectedVertexType.style.color.toLowerCase()
+                          : vertexTypeStore.selectedVertexType!.style.color!.toLowerCase(),
+                        icon: null,
+                        display_fields: value,
+                        size: vertexTypeStore.editedSelectedVertexType.style.size !==
+                        null
+                          ? vertexTypeStore.editedSelectedVertexType.style.size
+                          : vertexTypeStore.selectedVertexType!.style.size
+                      }
+                    });
+                  }} 
+                  value={
+                    vertexTypeStore.editedSelectedVertexType.style.display_fields.length !== 0
+                      ? vertexTypeStore.editedSelectedVertexType.style.display_fields
+                      : (() => {
+                        vertexTypeStore.selectedVertexType!.style.display_fields.forEach((item, index) => {
+                          if(item === "~id") {
+                            vertexTypeStore.selectedVertexType!.style.display_fields[index] = "顶点ID";
+                            return vertexTypeStore.selectedVertexType!.style.display_fields;
+                          }
+                        })
+                        return vertexTypeStore.selectedVertexType!.style.display_fields;
+                      })()
+                    } 
+                >  
+                  {vertexTypeStore.selectedVertexType?.properties.concat({name: '顶点ID', nullable: false}).concat(vertexTypeStore.editedSelectedVertexType.append_properties)  //vertexTypeStore.newVertexType.properties
+                    // .filter(({ nullable }) => !nullable)
+                    .map(item => { 
+                     const order = vertexTypeStore.editedSelectedVertexType.style.display_fields.findIndex(
+                        name => name === item.name
+                      );
 
+                      const multiSelectOptionClassName = classnames({
+                        'metadata-configs-sorted-multiSelect-option': true,
+                        'metadata-configs-sorted-multiSelect-option-selected':
+                          order !== -1
+                      });
+
+                      return (
+                        <Select.Option value={item.name} key={item.name}>
+                          <div className={multiSelectOptionClassName}>
+                            <div>{order !== -1 ? order + 1 : ''}</div>
+                            <div>{item.name}</div>
+                          </div>
+                        </Select.Option>
+                      );
+                    })}
+                </Select> : <div>{(() => {
+                  vertexTypeStore.selectedVertexType!.style.display_fields.forEach((item, index) => {
+                    if(item === "~id") {
+                      vertexTypeStore.selectedVertexType!.style.display_fields[index] = "顶点ID";
+                    }
+                  })
+                  return vertexTypeStore.selectedVertexType!.style.display_fields.join("-");
+                })()}</div>
+                } 
+              </div>
                 <div
                   className="metadata-title"
                   style={{

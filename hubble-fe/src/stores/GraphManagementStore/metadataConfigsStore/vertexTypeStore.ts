@@ -49,16 +49,34 @@ export class VertexTypeStore {
     '#5c73e6',
     '#569380',
     '#8ecc93',
-    '#f79767',
-    '#f06667',
-    '#c990c0',
+    '#fe9227',
+    '#fe5b5d',
+    '#fd6ace',
     '#4d8dda',
     '#57c7e3',
-    '#ffe081',
-    '#da7194'
+    '#f2ca00',
+    '#c570ff',
+    '#2b65ff',
+    '#0eb880',
+    '#76c100',
+    '#ed7600',
+    '#e65055',
+    '#a64ee6',
+    '#108cee',
+    '#00b5d9',
+    '#f2ca00',
+    '#e048ae',
   ];
 
-  @observable.shallow newVertexType: VertexType = {
+  @observable.ref vertexSizeSchemas = [
+    {ch: '超小', en: 'TINY'},
+    {ch: '小', en: 'SMALL'},
+    {ch: '中', en: 'NORMAL'},
+    {ch: '大', en: 'BIG'},
+    {ch: '超大', en: 'HUGE'}
+  ];
+
+  @observable.shallow newVertexType: VertexType = {  
     name: '',
     id_strategy: 'PRIMARY_KEY',
     properties: [],
@@ -67,7 +85,9 @@ export class VertexTypeStore {
     open_label_index: false,
     style: {
       color: '#5c73e6',
-      icon: null
+      icon: null,
+      size: 'NORMAL',  
+      display_fields: ['顶点ID']  
     }
   };
 
@@ -80,13 +100,15 @@ export class VertexTypeStore {
   @observable isEditReady = true;
 
   @observable.ref selectedVertexType: VertexType | null = null;
-  @observable.ref editedSelectedVertexType: EditVertexTypeParams = {
+  @observable.ref editedSelectedVertexType: EditVertexTypeParams = {  
     append_properties: [],
     append_property_indexes: [],
     remove_property_indexes: [],
     style: {
       color: null,
-      icon: null
+      icon: null,
+      size: null,   
+      display_fields: []
     }
   };
 
@@ -119,6 +141,7 @@ export class VertexTypeStore {
     name: '',
     properties: '',
     primaryKeys: '',
+    displayFeilds: '',  
     propertyIndexes: []
   };
 
@@ -238,7 +261,9 @@ export class VertexTypeStore {
       open_label_index: false,
       style: {
         color: '#5c73e6',
-        icon: null
+        icon: null,
+        size: 'NORMAL',
+        display_fields: ['顶点ID']
       }
     };
   }
@@ -256,7 +281,9 @@ export class VertexTypeStore {
       remove_property_indexes: [],
       style: {
         color: null,
-        icon: null
+        icon: null,
+        size: null,
+        display_fields: []
       }
     };
 
@@ -373,6 +400,16 @@ export class VertexTypeStore {
       }
     }
 
+    if (category === 'displayFeilds') {  
+      if (
+        this.newVertexType.style.display_fields.length === 0
+      ) {
+        !initial &&
+          (this.validateNewVertexTypeErrorMessage.displayFeilds = '此项为必填项');
+        isReady = false;
+      }
+    }
+
     if (category === 'propertyIndexes') {
       this.isAddNewPropertyIndexReady = true;
 
@@ -431,7 +468,8 @@ export class VertexTypeStore {
       this.validateNewVertexType('name', initial) &&
       this.validateNewVertexType('properties', initial) &&
       this.validateNewVertexType('primaryKeys', initial) &&
-      this.validateNewVertexType('propertyIndexes', initial);
+      this.validateNewVertexType('propertyIndexes', initial) &&
+      this.validateNewVertexType('displayFeilds', initial);
   }
 
   @action
@@ -806,6 +844,7 @@ export class VertexTypeStore {
         name: '',
         properties: '',
         primaryKeys: '',
+        displayFeilds: '',
         propertyIndexes: []
       };
 

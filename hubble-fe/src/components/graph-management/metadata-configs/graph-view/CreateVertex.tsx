@@ -198,9 +198,9 @@ const CreateVertex: React.FC = observer(() => {
                 graphViewStore.switchGraphDataEmpty(false);
                 // need to get node colors again since fetchGraphViewData() will cause re-render in <GraphView />
                 // the graph use graphNode() rather than local added node
-                await dataAnalyzeStore.fetchAllNodeColors();
+                await dataAnalyzeStore.fetchAllNodeStyle();
                 graphViewStore.fetchGraphViewData(
-                  dataAnalyzeStore.colorMappings
+                  dataAnalyzeStore.vertexColorMappings
                 );
               }
 

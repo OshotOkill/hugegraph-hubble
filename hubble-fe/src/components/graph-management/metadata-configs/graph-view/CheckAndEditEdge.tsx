@@ -28,6 +28,7 @@ import {
 
 import BlueArrowIcon from '../../../../assets/imgs/ic_arrow_blue.svg';
 import CloseIcon from '../../../../assets/imgs/ic_close_16.svg';
+import { VertexTypeStore } from '../../../../stores/GraphManagementStore/metadataConfigsStore/vertexTypeStore';
 
 const propertyIndexTypeMappings: Record<string, string> = {
   SECONDARY: '二级索引',
@@ -389,7 +390,18 @@ const CheckAndEditEdge: React.FC = observer(() => {
                     ...edgeTypeStore.editedSelectedEdgeType,
                     style: {
                       color: value,
-                      icon: null
+                      icon: null,
+                      with_arrow: edgeTypeStore.editedSelectedEdgeType.style.with_arrow !== 
+                        null
+                        ? edgeTypeStore.editedSelectedEdgeType.style.with_arrow
+                        : edgeTypeStore.selectedEdgeType!.style.with_arrow,
+                      thickness: edgeTypeStore.editedSelectedEdgeType.style.thickness !==
+                        null 
+                        ? edgeTypeStore.editedSelectedEdgeType.style.thickness
+                        : edgeTypeStore.selectedEdgeType!.style.thickness,
+                        display_fields: edgeTypeStore.editedSelectedEdgeType.style.display_fields.length !== 0
+                          ? edgeTypeStore.editedSelectedEdgeType.style.display_fields
+                          : edgeTypeStore.editedSelectedEdgeType!.style.display_fields,
                     }
                   });
                 }}

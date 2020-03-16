@@ -414,7 +414,9 @@ const CheckAndEditVertex: React.FC = observer(() => {
                   ...vertexTypeStore.editedSelectedVertexType,
                   style: {
                     color: value,
-                    icon: null
+                    icon: null,
+                    size: '',
+                    display_fields: []
                   }
                 });
               }}

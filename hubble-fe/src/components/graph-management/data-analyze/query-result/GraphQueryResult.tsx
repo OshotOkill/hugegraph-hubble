@@ -78,16 +78,19 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
         width,
         height,
         nodes: {
-          shape: 'dot'
+          shape: 'dot',
         },
         edges: {
-          arrows: 'to',
           arrowStrikethrough: false,
           width: 1.5,
           color: {
             color: 'rgba(92, 115, 230, 0.8)',
             hover: 'rgba(92, 115, 230, 1)',
             highlight: 'rgba(92, 115, 230, 1)'
+          },
+          scaling:{   
+            min:1,
+            max:4
           }
         },
         interaction: {
@@ -448,7 +451,7 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
                         borderRadius: 5,
                         marginRight: 5,
                         backgroundColor:
-                          dataAnalyzeStore.colorMappings[label] || '#5c73e6'
+                          dataAnalyzeStore.vertexColorMappings[label] || '#5c73e6'
                       }}
                     ></div>
                     <div>{label}</div>
