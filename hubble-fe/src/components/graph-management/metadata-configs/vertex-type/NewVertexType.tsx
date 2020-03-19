@@ -115,7 +115,14 @@ const NewVertexType: React.FC = observer(() => {
             <Select   
               width={66}
               size="medium"
-              value={vertexTypeStore.newVertexType.style.color}
+              value={
+                (<div
+                  className="new-vertex-type-options-color" 
+                  style={{background: vertexTypeStore.newVertexType.style.color!.toLowerCase(), marginTop: 5,}}
+                ></div>)
+              }
+              prefixCls="new-fc-one-select-another"
+              dropdownMatchSelectWidth={false}
               onChange={(value: string) => {
                 vertexTypeStore.mutateNewProperty({
                   ...vertexTypeStore.newVertexType,
@@ -128,15 +135,17 @@ const NewVertexType: React.FC = observer(() => {
               }}
             >
               {vertexTypeStore.colorSchemas.map((color: string, index: number) => (
-                <Select.Option value={color} key={color} style={{display:"inline-block", marginLeft: index%5 === 0 ? 10 : 0, marginTop: index < 5 ? 12 : 6, marginBottom: index >= 15 ? 8 : 0}}>
+                <Select.Option value={color} key={color} style={{display:"inline-block", marginLeft: index%5 === 0 ? 0 : -7, marginTop: index<5 ? 9 :2}}>
+                <div className={(vertexTypeStore.newVertexType.style.color)===color ? "new-vertex-type-options-no-border" : "new-vertex-type-options-border"} 
+                      > 
                   <div
                     className="new-vertex-type-options-color"
                     style={{
                       background: color,
-                      marginTop: 4,
                     }}
                   ></div>
-                </Select.Option>
+                </div>
+            </Select.Option>
               ))}
             </Select>
             </div>

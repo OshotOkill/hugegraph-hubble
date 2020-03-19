@@ -33,6 +33,7 @@ import LoadingBackIcon from '../../../../assets/imgs/ic_loading_back.svg';
 import LoadingFrontIcon from '../../../../assets/imgs/ic_loading_front.svg';
 import './VertexTypeList.less';
 import { VertexTypeValidatePropertyIndexes } from '../../../../stores/types/GraphManagementStore/metadataConfigsStore';
+import { style } from 'd3';
 // import { DataAnalyzeStoreContext } from '../../../../stores';
 
 const styles = {
@@ -693,18 +694,26 @@ const VertexTypeList: React.FC = observer(() => {
                   <div className="metadata-drawer-options-name">
                     <span style={{lineHeight: 2.4}}>顶点样式：</span>
                   </div>
-                  <div className="new-vertex-type-options-colors">
+                  <div className="new-vertex-type-options-colors"> 
                     <Select   
                       width={66}
                       size="medium"
+                      prefixCls="new-fc-one-select-another"
+                      dropdownMatchSelectWidth={false}
                       showSearch={false}
                       disabled={!isEditVertex}
-                      style={{width: 300}}
                       value={
-                        vertexTypeStore.editedSelectedVertexType.style.color !==
-                        null
-                          ? vertexTypeStore.editedSelectedVertexType.style.color.toLowerCase()
-                          : vertexTypeStore.selectedVertexType!.style.color!.toLowerCase()
+                        (<div
+                          className="new-vertex-type-options-color"
+                          style={{
+                            background: 
+                              vertexTypeStore.editedSelectedVertexType.style.color !==
+                              null
+                                ? vertexTypeStore.editedSelectedVertexType.style.color.toLowerCase()
+                                : vertexTypeStore.selectedVertexType!.style.color!.toLowerCase(),
+                            marginTop: 5,
+                          }}
+                        ></div>)
                       }
                       onChange={(value: string) => {
                         vertexTypeStore.mutateEditedSelectedVertexType({
@@ -724,14 +733,18 @@ const VertexTypeList: React.FC = observer(() => {
                       }}
                     >
                       {vertexTypeStore.colorSchemas.map((color: string, index: number) => (
-                        <Select.Option value={color} key={color} style={{display:"inline-block", marginLeft: index%5 === 0 ? 10 : 0, marginTop: index < 5 ? 12 : 6, marginBottom: index >= 15 ? 8 : 0}}>
-                          <div
-                            className="new-vertex-type-options-color"
-                            style={{
-                              background: color,
-                              marginTop: 5,
-                            }}
-                          ></div>
+                        <Select.Option value={color} key={color} style={{display:"inline-block", marginLeft: index%5 === 0 ? 0 : -7, marginTop: index<5 ? 9 :2}}>
+                            <div className={(vertexTypeStore.editedSelectedVertexType.style.color !== null
+                                      ? vertexTypeStore.editedSelectedVertexType.style.color.toLowerCase()
+                                      : vertexTypeStore.selectedVertexType!.style.color!.toLowerCase())===color ? "new-vertex-type-options-border" : "new-vertex-type-options-no-border"} 
+                                  > 
+                              <div
+                                className="new-vertex-type-options-color"
+                                style={{
+                                  background: color,
+                                }}
+                              ></div>
+                            </div>
                         </Select.Option>
                       ))}
                     </Select>
@@ -778,8 +791,16 @@ const VertexTypeList: React.FC = observer(() => {
                     </Select>
                   </div>
                 </div>
-
-
+                <div className={metadataDrawerOptionClass}>
+                  <div className="metadata-drawer-options-name">
+                    <span>ID策略：</span>
+                  </div>
+                  {
+                    IDStrategyMappings[
+                      vertexTypeStore.selectedVertexType!.id_strategy
+                    ]
+                  }
+                </div>          
                 <div className="metadata-drawer-options">
                   <div className="metadata-drawer-options-name">
                     <span>关联属性：</span>
@@ -915,7 +936,7 @@ const VertexTypeList: React.FC = observer(() => {
                     )}
                   </div>
                 </div>
-                <div className={metadataDrawerOptionClass}>
+                {/* <div className={metadataDrawerOptionClass}>
                   <div className="metadata-drawer-options-name">
                     <span>ID策略：</span>
                   </div>
@@ -924,7 +945,7 @@ const VertexTypeList: React.FC = observer(() => {
                       vertexTypeStore.selectedVertexType!.id_strategy
                     ]
                   }
-                </div>
+                </div> */}
                 <div className={metadataDrawerOptionClass}>
                   <div className="metadata-drawer-options-name">
                     <span>主键属性：</span>

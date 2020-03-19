@@ -826,9 +826,15 @@ export class DataAnalyzeStore {
           this.vertexSizeMappings[name] = style.size;
         }
         if (style.display_fields.length !== 0) {
+          for(let i = 0; i < style.display_fields.length; i ++){
+            if(style.display_fields[i] === "~id"){
+              style.display_fields[i] = "顶点ID";
+            }
+          }
           this.vertexWritingMappings[name] = style.display_fields;
         }
       });
+      
       this.requestStatus.fetchAllNodeStyle = 'success';
     } catch (error) {
       this.requestStatus.fetchAllNodeStyle = 'failed';

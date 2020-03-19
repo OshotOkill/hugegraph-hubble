@@ -21,10 +21,10 @@ import TooltipTrigger from 'react-popper-tooltip';
 import HintIcon from '../../../../assets/imgs/ic_question_mark.svg';
 
 import BlueArrowIcon from '../../../../assets/imgs/ic_arrow_blue.svg';
-import SelectedArrowIcon from '../../../../assets/imgs/ic_arrow_selected.svg'; //选中的箭头
-import NoSelectedArrowIcon from '../../../../assets/imgs/ic_arrow.svg'; //未选中的箭头
-import SelectedStraightIcon from '../../../../assets/imgs/ic_straight_selected.svg'; //选中的直线
-import NoSelectedStraightIcon from '../../../../assets/imgs/ic_straight.svg'; //未选中的直线
+import SelectedSoilidArrowIcon from '../../../../assets/imgs/ic_arrow_selected.svg'; //选中的箭头
+import NoSelectedSoilidArrowIcon from '../../../../assets/imgs/ic_arrow.svg'; //未选中的箭头
+import SelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight_selected.svg'; //选中的直线
+import NoSelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight.svg'; //未选中的直线
 import closeIcon from '../../../../assets/imgs/ic_close_16.svg';
 import MetadataConfigsRootStore from '../../../../stores/GraphManagementStore/metadataConfigsStore/metadataConfigsStore';
 import { EdgeTypeValidatePropertyIndexes } from '../../../../stores/types/GraphManagementStore/metadataConfigsStore';
@@ -113,7 +113,14 @@ const NewVertexType: React.FC = observer(() => {
             <Select
               width={66}
               size="medium"
-              value={edgeTypeStore.newEdgeType.style.color}
+              value={
+                (<div
+                  className="new-vertex-type-options-color" 
+                  style={{background: edgeTypeStore.newEdgeType.style.color!.toLowerCase(), marginTop: 5,}}
+                ></div>)
+              }
+              prefixCls="new-fc-one-select-another"
+              dropdownMatchSelectWidth={false}
               onChange={(value: string) => {
                 edgeTypeStore.mutateNewEdgeType({
                   ...edgeTypeStore.newEdgeType,
@@ -125,15 +132,17 @@ const NewVertexType: React.FC = observer(() => {
               }}
             >
               {edgeTypeStore.colorSchemas.map((color: string, index: number) => (
-                <Select.Option value={color} key={color} style={{display:"inline-block", marginLeft: index%5 === 0 ? 10 : 0, marginTop: index < 5 ? 12 : 6, marginBottom: index >= 15 ? 8 : 0}}>
+                <Select.Option value={color} key={color} style={{display:"inline-block", marginLeft: index%5 === 0 ? 0 : -7, marginTop: index<5 ? 9 :2}}>
+                <div className={(edgeTypeStore.newEdgeType.style.color)===color ? "new-vertex-type-options-no-border" : "new-vertex-type-options-border"} 
+                      > 
                   <div
                     className="new-vertex-type-options-color"
                     style={{
                       background: color,
-                      marginTop: 4,
                     }}
                   ></div>
-                </Select.Option>
+                </div>
+            </Select.Option>
               ))}
             </Select>
             </div>
@@ -141,19 +150,19 @@ const NewVertexType: React.FC = observer(() => {
             <Select   
               width={66}
               size="medium"
-              value={edgeTypeStore.newEdgeType.style.with_arrow ? (<div><img src={NoSelectedArrowIcon} /></div>) : (<div><img src={NoSelectedStraightIcon} /></div>)}
-              onChange={(e: boolean) => {
+              value={edgeTypeStore.newEdgeType.style.with_arrow ? (<div><img src={NoSelectedSoilidArrowIcon} /></div>) : (<div><img src={NoSelectedSoilidStraightIcon} /></div>)}
+              onChange={(e: any) => {
                 edgeTypeStore.mutateNewEdgeType({
                   ...edgeTypeStore.newEdgeType,
                   style: {
                     ...edgeTypeStore.newEdgeType.style,
-                    with_arrow: e
+                    with_arrow: (e[0] && (e[1] === "solid"))
                   }
                 });
               }}
             >
-              {edgeTypeStore.withArrowSchemas.map((item, index) => (
-                <Select.Option value={item.flag} key={item.flag} style={{width: 66}}>
+              {edgeTypeStore.edgeShapeSchemas.map((item, index) => (
+                <Select.Option value={[item.flag, item.shape]} key={item.flag} style={{width: 66}}>
                   <div
                     className="new-vertex-type-options-color"
                     style={{

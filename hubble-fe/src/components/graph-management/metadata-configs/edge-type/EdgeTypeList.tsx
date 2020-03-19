@@ -24,10 +24,10 @@ import TooltipTrigger from 'react-popper-tooltip';
 import MetadataConfigsRootStore from '../../../../stores/GraphManagementStore/metadataConfigsStore/metadataConfigsStore';
 import AddIcon from '../../../../assets/imgs/ic_add.svg';
 import BlueArrowIcon from '../../../../assets/imgs/ic_arrow_blue.svg';
-import SelectedArrowIcon from '../../../../assets/imgs/ic_arrow_selected.svg'; //选中的箭头
-import NoSelectedArrowIcon from '../../../../assets/imgs/ic_arrow.svg'; //未选中的箭头
-import SelectedStraightIcon from '../../../../assets/imgs/ic_straight_selected.svg'; //选中的直线
-import NoSelectedStraightIcon from '../../../../assets/imgs/ic_straight.svg'; //未选中的直线
+import SelectedSoilidArrowIcon from '../../../../assets/imgs/ic_arrow_selected.svg'; //选中的箭头
+import NoSelectedSoilidArrowIcon from '../../../../assets/imgs/ic_arrow.svg'; //未选中的箭头
+import SelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight_selected.svg'; //选中的直线
+import NoSelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight.svg'; //未选中的直线
 import WhiteCloseIcon from '../../../../assets/imgs/ic_close_white.svg';
 import CloseIcon from '../../../../assets/imgs/ic_close_16.svg';
 import LoadingBackIcon from '../../../../assets/imgs/ic_loading_back.svg';
@@ -660,11 +660,20 @@ const EdgeTypeList: React.FC = observer(() => {
                         size="medium"
                         showSearch={false}
                         disabled={!isEditEdge}
+                        prefixCls="new-fc-one-select-another"
+                        dropdownMatchSelectWidth={false}
                         value={
-                          edgeTypeStore.editedSelectedEdgeType.style.color !==
-                          null
-                            ? edgeTypeStore.editedSelectedEdgeType.style.color.toLowerCase()
-                            : edgeTypeStore.selectedEdgeType!.style.color!.toLowerCase()
+                          (<div
+                            className="new-vertex-type-options-color"
+                            style={{
+                              background: 
+                                edgeTypeStore.editedSelectedEdgeType.style.color !==
+                                null
+                                  ? edgeTypeStore.editedSelectedEdgeType.style.color.toLowerCase()
+                                  : edgeTypeStore.selectedEdgeType!.style.color!.toLowerCase(),
+                              marginTop: 5,
+                            }}
+                          ></div>)
                         }
                         onChange={(value: string) => {
                           edgeTypeStore.mutateEditedSelectedEdgeType({
@@ -688,15 +697,19 @@ const EdgeTypeList: React.FC = observer(() => {
                         }}
                       >
                         {edgeTypeStore.colorSchemas.map((color: string, index: number) => (
-                          <Select.Option value={color} key={color} style={{display:"inline-block", marginLeft: index%5 === 0 ? 10 : 0, marginTop: index < 5 ? 12 : 6, marginBottom: index >= 15 ? 8 : 0}}>
+                          <Select.Option value={color} key={color} style={{display:"inline-block", marginLeft: index%5 === 0 ? 0 : -7, marginTop: index<5 ? 9 :2}}>
+                          <div className={(edgeTypeStore.editedSelectedEdgeType.style.color !== null
+                                    ? edgeTypeStore.editedSelectedEdgeType.style.color.toLowerCase()
+                                    : edgeTypeStore.selectedEdgeType!.style.color!.toLowerCase())===color ? "new-vertex-type-options-no-border" : "new-vertex-type-options-border"} 
+                                > 
                             <div
                               className="new-vertex-type-options-color"
                               style={{
                                 background: color,
-                                marginTop: 5
                               }}
                             ></div>
-                          </Select.Option>
+                          </div>
+                      </Select.Option>
                         ))}
                       </Select>
                       </div>
@@ -711,13 +724,13 @@ const EdgeTypeList: React.FC = observer(() => {
                                null
                                  ? edgeTypeStore.editedSelectedEdgeType.style.with_arrow
                                 : edgeTypeStore.selectedEdgeType!.style.with_arrow) ?
-                          (<div><img src={NoSelectedArrowIcon} /></div>) : (<div><img src={NoSelectedStraightIcon} /></div>)
+                          (<div><img src={NoSelectedSoilidArrowIcon} /></div>) : (<div><img src={NoSelectedSoilidStraightIcon} /></div>)
                         }
-                        onChange={(e: boolean) => {
+                        onChange={(e: any) => {
                           edgeTypeStore.mutateEditedSelectedEdgeType({
                             ...edgeTypeStore.editedSelectedEdgeType,
                             style: {
-                              with_arrow: e,
+                              with_arrow: (e[0] && (e[1] === "solid")),
                               color: edgeTypeStore.editedSelectedEdgeType.style.color !==
                                   null
                                   ? edgeTypeStore.editedSelectedEdgeType.style.color.toLowerCase()
@@ -734,14 +747,13 @@ const EdgeTypeList: React.FC = observer(() => {
                           }); 
                         }} 
                       >
-                         {edgeTypeStore.withArrowSchemas.map((item, index) => ( 
-                          <Select.Option value={item.flag} key={item.flag} style={{width: 66}}>
+                         {edgeTypeStore.edgeShapeSchemas.map((item, index) => ( 
+                          <Select.Option value={[item.flag, item.shape]} key={item.flag} style={{width: 66}}>
                             <div
                               className="new-vertex-type-options-color"
-                              style={{
-                                marginTop: 5
-                              }} 
-                          ><img src={ edgeTypeStore.editedSelectedEdgeType.style.with_arrow === null ? 
+                              style={{marginTop: 5}}
+                              >
+                                <img src={ edgeTypeStore.editedSelectedEdgeType.style.with_arrow === null ? 
                               (item.flag === edgeTypeStore.selectedEdgeType!.style.with_arrow ? item.blueicon : item.blackicon) 
                               : (edgeTypeStore.editedSelectedEdgeType.style.with_arrow === item.flag ? item.blueicon : item.blackicon)
                           } alt="toogleEdgeArrow"/>
@@ -809,6 +821,18 @@ const EdgeTypeList: React.FC = observer(() => {
                       <span>终点类型：</span>
                     </div>
                     {edgeTypeStore.selectedEdgeType!.target_label}
+                  </div>
+                  <div className={metadataDrawerOptionClass}>
+                    <div className="metadata-drawer-options-name">
+                      <span>允许多次连接：</span>
+                    </div>
+                    <Switch
+                      checkedChildren="开"
+                      unCheckedChildren="关"
+                      checked={edgeTypeStore.selectedEdgeType!.link_multi_times}
+                      size="large"
+                      disabled
+                    />
                   </div>
                   <div className="metadata-drawer-options">
                     <div className="metadata-drawer-options-name">
@@ -947,7 +971,7 @@ const EdgeTypeList: React.FC = observer(() => {
                     </div>
                   </div>
 
-                  <div className={metadataDrawerOptionClass}>
+                  {/* <div className={metadataDrawerOptionClass}>
                     <div className="metadata-drawer-options-name">
                       <span>允许多次连接：</span>
                     </div>
@@ -958,7 +982,7 @@ const EdgeTypeList: React.FC = observer(() => {
                       size="large"
                       disabled
                     />
-                  </div>
+                  </div> */}
                   <div className={metadataDrawerOptionClass}>
                     <div className="metadata-drawer-options-name">
                       <span>区分键属性：</span>

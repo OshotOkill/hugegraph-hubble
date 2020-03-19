@@ -54,7 +54,7 @@ export class VertexTypeStore {
     '#fd6ace',
     '#4d8dda',
     '#57c7e3',
-    '#f2ca00',
+    '#ffe081',
     '#c570ff',
     '#2b65ff',
     '#0eb880',

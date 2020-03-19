@@ -16,10 +16,10 @@ import {
   EdgeTypeValidatePropertyIndexes
 } from '../../types/GraphManagementStore/metadataConfigsStore';
 
-import SelectedArrowIcon from '../../../assets/imgs/ic_arrow_selected.svg';
-import NoSelectedArrowIcon from '../../../assets/imgs/ic_arrow.svg';
-import SelectedStraightIcon from '../../../assets/imgs/ic_straight_selected.svg';
-import NoSelectedStraightIcon from '../../../assets/imgs/ic_straight.svg';
+import SelectedSolidArrowIcon from '../../../assets/imgs/ic_arrow_selected.svg';
+import NoSelectedSolidArrowIcon from '../../../assets/imgs/ic_arrow.svg';
+import SelectedSolidStraightIcon from '../../../assets/imgs/ic_straight_selected.svg';
+import NoSelectedSolidStraightIcon from '../../../assets/imgs/ic_straight.svg';
 
 export class EdgeTypeStore {
   metadataConfigsRootStore: MetadataConfigsRootStore;
@@ -60,7 +60,7 @@ export class EdgeTypeStore {
     '#fd6ace',
     '#4d8dda',
     '#57c7e3',
-    '#f2ca00',
+    '#ffe081',
     '#c570ff',
     '#2b65ff',
     '#0eb880',
@@ -74,9 +74,9 @@ export class EdgeTypeStore {
     '#e048ae',
   ];
 
-  @observable.ref withArrowSchemas = [
-    {blackicon: NoSelectedArrowIcon, blueicon: SelectedArrowIcon, flag: true},
-    {blackicon: NoSelectedStraightIcon, blueicon: SelectedStraightIcon, flag: false}
+  @observable.ref edgeShapeSchemas = [ 
+    {blackicon: NoSelectedSolidArrowIcon, blueicon: SelectedSolidArrowIcon, flag: true, shape: "solid"},
+    {blackicon: NoSelectedSolidStraightIcon, blueicon: SelectedSolidStraightIcon, flag: false, shape: "solid"},
   ];
 
   @observable.ref thicknessSchemas = [
