@@ -692,7 +692,7 @@ const VertexTypeList: React.FC = observer(() => {
                 </div>
                   <div className="metadata-drawer-options">
                   <div className="metadata-drawer-options-name">
-                    <span style={{lineHeight: 2.4}}>顶点样式：</span>
+                    <span style={{lineHeight: 2.5}}>顶点样式：</span>
                   </div>
                   <div className="new-vertex-type-options-colors"> 
                     <Select   
@@ -936,30 +936,17 @@ const VertexTypeList: React.FC = observer(() => {
                     )}
                   </div>
                 </div>
-                {/* <div className={metadataDrawerOptionClass}>
-                  <div className="metadata-drawer-options-name">
-                    <span>ID策略：</span>
-                  </div>
-                  {
-                    IDStrategyMappings[
-                      vertexTypeStore.selectedVertexType!.id_strategy
-                    ]
-                  }
-                </div> */}
                 <div className={metadataDrawerOptionClass}>
                   <div className="metadata-drawer-options-name">
                     <span>主键属性：</span>
                   </div>
                   {vertexTypeStore.selectedVertexType!.primary_keys.join(';')}
                 </div>
-                {/* <div className={metadataDrawerOptionClass}> 
-                  </div> */}
                   <div className="metadata-drawer-options">
                 <div className="metadata-drawer-options-name">
                   <span>顶点展示内容：</span>
                 </div>
                 { isEditVertex ? <Select
-                  style={{marginTop: -4}}
                   width={420}
                   mode="multiple"
                   size="medium"

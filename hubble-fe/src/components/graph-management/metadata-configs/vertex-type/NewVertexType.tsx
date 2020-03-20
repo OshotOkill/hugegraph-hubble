@@ -136,7 +136,7 @@ const NewVertexType: React.FC = observer(() => {
             >
               {vertexTypeStore.colorSchemas.map((color: string, index: number) => (
                 <Select.Option value={color} key={color} style={{display:"inline-block", marginLeft: index%5 === 0 ? 0 : -7, marginTop: index<5 ? 9 :2}}>
-                <div className={(vertexTypeStore.newVertexType.style.color)===color ? "new-vertex-type-options-no-border" : "new-vertex-type-options-border"} 
+                <div className={(vertexTypeStore.newVertexType.style.color)===color ? "new-vertex-type-options-border" : "new-vertex-type-options-no-border"} 
                       > 
                   <div
                     className="new-vertex-type-options-color"

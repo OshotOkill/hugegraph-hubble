@@ -652,7 +652,7 @@ const EdgeTypeList: React.FC = observer(() => {
                   </div>          
                   <div className="metadata-drawer-options">
                     <div className="metadata-drawer-options-name">
-                      <span style={{lineHeight: 2.4}}>边样式：</span>
+                      <span style={{lineHeight: 2.5}}>边样式：</span>
                     </div>
                     <div className="new-vertex-type-options-colors">
                       <Select  
@@ -700,7 +700,7 @@ const EdgeTypeList: React.FC = observer(() => {
                           <Select.Option value={color} key={color} style={{display:"inline-block", marginLeft: index%5 === 0 ? 0 : -7, marginTop: index<5 ? 9 :2}}>
                           <div className={(edgeTypeStore.editedSelectedEdgeType.style.color !== null
                                     ? edgeTypeStore.editedSelectedEdgeType.style.color.toLowerCase()
-                                    : edgeTypeStore.selectedEdgeType!.style.color!.toLowerCase())===color ? "new-vertex-type-options-no-border" : "new-vertex-type-options-border"} 
+                                    : edgeTypeStore.selectedEdgeType!.style.color!.toLowerCase())===color ? "new-vertex-type-options-border" : "new-vertex-type-options-no-border"} 
                                 > 
                             <div
                               className="new-vertex-type-options-color"
@@ -970,19 +970,6 @@ const EdgeTypeList: React.FC = observer(() => {
                       )}
                     </div>
                   </div>
-
-                  {/* <div className={metadataDrawerOptionClass}>
-                    <div className="metadata-drawer-options-name">
-                      <span>允许多次连接：</span>
-                    </div>
-                    <Switch
-                      checkedChildren="开"
-                      unCheckedChildren="关"
-                      checked={edgeTypeStore.selectedEdgeType!.link_multi_times}
-                      size="large"
-                      disabled
-                    />
-                  </div> */}
                   <div className={metadataDrawerOptionClass}>
                     <div className="metadata-drawer-options-name">
                       <span>区分键属性：</span>
@@ -994,7 +981,6 @@ const EdgeTypeList: React.FC = observer(() => {
                       <span>边展示内容：</span>
                     </div>
                     {isEditEdge ? <Select
-                      style={{marginTop: -4}}
                       width={420}
                       mode="multiple"
                       size="medium"
