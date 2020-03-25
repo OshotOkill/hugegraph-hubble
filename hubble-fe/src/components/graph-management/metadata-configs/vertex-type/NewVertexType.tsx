@@ -107,19 +107,22 @@ const NewVertexType: React.FC = observer(() => {
         </div>
 
         <div className="new-vertex-type-options">
-        <div className="new-vertex-type-options-name">
+          <div className="new-vertex-type-options-name">
             <span className="metdata-essential-form-options">*</span>
             <span>顶点样式：</span>
           </div>
           <div className="new-vertex-type-options-colors">
-            <Select   
+            <Select
               width={66}
               size="medium"
               value={
-                (<div
-                  className="new-vertex-type-options-color" 
-                  style={{background: vertexTypeStore.newVertexType.style.color!.toLowerCase(), marginTop: 5,}}
-                ></div>)
+                <div
+                  className="new-vertex-type-options-color"
+                  style={{
+                    background: vertexTypeStore.newVertexType.style.color!.toLowerCase(),
+                    marginTop: 5
+                  }}
+                ></div>
               }
               prefixCls="new-fc-one-select-another"
               dropdownMatchSelectWidth={false}
@@ -134,23 +137,38 @@ const NewVertexType: React.FC = observer(() => {
                 });
               }}
             >
-              {vertexTypeStore.colorSchemas.map((color: string, index: number) => (
-                <Select.Option value={color} key={color} style={{display:"inline-block", marginLeft: index%5 === 0 ? 0 : -7, marginTop: index<5 ? 9 :2}}>
-                <div className={(vertexTypeStore.newVertexType.style.color)===color ? "new-vertex-type-options-border" : "new-vertex-type-options-no-border"} 
-                      > 
-                  <div
-                    className="new-vertex-type-options-color"
+              {vertexTypeStore.colorSchemas.map(
+                (color: string, index: number) => (
+                  <Select.Option
+                    value={color}
+                    key={color}
                     style={{
-                      background: color,
+                      display: 'inline-block',
+                      marginLeft: index % 5 === 0 ? 0 : -7,
+                      marginTop: index < 5 ? 9 : 2
                     }}
-                  ></div>
-                </div>
-            </Select.Option>
-              ))}
+                  >
+                    <div
+                      className={
+                        vertexTypeStore.newVertexType.style.color === color
+                          ? 'new-vertex-type-options-border'
+                          : 'new-vertex-type-options-no-border'
+                      }
+                    >
+                      <div
+                        className="new-vertex-type-options-color"
+                        style={{
+                          background: color
+                        }}
+                      ></div>
+                    </div>
+                  </Select.Option>
+                )
+              )}
             </Select>
-            </div>
-            <div className="new-vertex-type-options-colors">
-            <Select   
+          </div>
+          <div className="new-vertex-type-options-colors">
+            <Select
               width={67}
               size="medium"
               value={vertexTypeStore.newVertexType.style.size}
@@ -165,13 +183,19 @@ const NewVertexType: React.FC = observer(() => {
               }}
             >
               {vertexTypeStore.vertexSizeSchemas.map((value, index) => (
-                <Select.Option value={value.en} key={value.en} style={{width: 66}}>
+                <Select.Option
+                  value={value.en}
+                  key={value.en}
+                  style={{ width: 66 }}
+                >
                   <div
                     className="new-vertex-type-options-color"
                     style={{
                       marginTop: 6
                     }}
-                    >{value.ch}</div>
+                  >
+                    {value.ch}
+                  </div>
                 </Select.Option>
               ))}
             </Select>
@@ -392,55 +416,56 @@ const NewVertexType: React.FC = observer(() => {
           </div>
         )}
 
-          <div className="new-vertex-type-options">
-            <div className="new-vertex-type-options-name">
-              <span className="metdata-essential-form-options">*</span>
-              <span>顶点展示内容：</span>
-            </div>
-            <Select
-              width={420}
-              mode="multiple"
-              size="medium"
-              placeholder="请选择顶点展示内容"
-              showSearch={false}
-              onChange={(value: string[]) => {
-                vertexTypeStore.mutateNewProperty({
-                  ...vertexTypeStore.newVertexType,
-                  style: {
-                    ...vertexTypeStore.newVertexType.style,
-                    display_fields: value,
-                  }
+        <div className="new-vertex-type-options">
+          <div className="new-vertex-type-options-name">
+            <span className="metdata-essential-form-options">*</span>
+            <span>顶点展示内容：</span>
+          </div>
+          <Select
+            width={420}
+            mode="multiple"
+            size="medium"
+            placeholder="请选择顶点展示内容"
+            showSearch={false}
+            onChange={(value: string[]) => {
+              vertexTypeStore.mutateNewProperty({
+                ...vertexTypeStore.newVertexType,
+                style: {
+                  ...vertexTypeStore.newVertexType.style,
+                  display_fields: value
+                }
+              });
+
+              vertexTypeStore.validateAllNewVertexType(true);
+              vertexTypeStore.validateNewVertexType('displayFeilds');
+            }}
+            value={vertexTypeStore.newVertexType.style.display_fields}
+          >
+            {vertexTypeStore.newVertexType.properties
+              .concat({ name: '顶点ID', nullable: false })
+              .filter(({ nullable }) => !nullable)
+              .map(item => {
+                const order = vertexTypeStore.newVertexType.style.display_fields.findIndex(
+                  name => name === item.name
+                );
+
+                const multiSelectOptionClassName = classnames({
+                  'metadata-configs-sorted-multiSelect-option': true,
+                  'metadata-configs-sorted-multiSelect-option-selected':
+                    order !== -1
                 });
 
-                vertexTypeStore.validateAllNewVertexType(true);
-                vertexTypeStore.validateNewVertexType('displayFeilds');
-              }}
-              value={vertexTypeStore.newVertexType.style.display_fields}
-            >
-              {vertexTypeStore.newVertexType.properties.concat({name: '顶点ID', nullable: false})
-                .filter(({ nullable }) => !nullable)
-                .map(item => {
-                  const order = vertexTypeStore.newVertexType.style.display_fields.findIndex(
-                    name => name === item.name
-                  );
-
-                  const multiSelectOptionClassName = classnames({
-                    'metadata-configs-sorted-multiSelect-option': true,
-                    'metadata-configs-sorted-multiSelect-option-selected':
-                      order !== -1
-                  });
-
-                  return (
-                    <Select.Option value={item.name} key={item.name}>
-                      <div className={multiSelectOptionClassName}>
-                        <div>{order !== -1 ? order + 1 : ''}</div>
-                        <div>{item.name}</div>
-                      </div>
-                    </Select.Option>
-                  );
-                })}
-            </Select>
-          </div>
+                return (
+                  <Select.Option value={item.name} key={item.name}>
+                    <div className={multiSelectOptionClassName}>
+                      <div>{order !== -1 ? order + 1 : ''}</div>
+                      <div>{item.name}</div>
+                    </div>
+                  </Select.Option>
+                );
+              })}
+          </Select>
+        </div>
 
         <div
           className="metadata-title new-vertex-type-title"

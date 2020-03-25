@@ -114,10 +114,13 @@ const NewVertexType: React.FC = observer(() => {
               width={66}
               size="medium"
               value={
-                (<div
-                  className="new-vertex-type-options-color" 
-                  style={{background: edgeTypeStore.newEdgeType.style.color!.toLowerCase(), marginTop: 5,}}
-                ></div>)
+                <div
+                  className="new-vertex-type-options-color"
+                  style={{
+                    background: edgeTypeStore.newEdgeType.style.color!.toLowerCase(),
+                    marginTop: 5
+                  }}
+                ></div>
               }
               prefixCls="new-fc-one-select-another"
               dropdownMatchSelectWidth={false}
@@ -131,52 +134,88 @@ const NewVertexType: React.FC = observer(() => {
                 });
               }}
             >
-              {edgeTypeStore.colorSchemas.map((color: string, index: number) => (
-                <Select.Option value={color} key={color} style={{display:"inline-block", marginLeft: index%5 === 0 ? 0 : -7, marginTop: index<5 ? 9 :2}}>
-                <div className={(edgeTypeStore.newEdgeType.style.color)===color ? "new-vertex-type-options-border" : "new-vertex-type-options-no-border"} 
-                      > 
-                  <div
-                    className="new-vertex-type-options-color"
+              {edgeTypeStore.colorSchemas.map(
+                (color: string, index: number) => (
+                  <Select.Option
+                    value={color}
+                    key={color}
                     style={{
-                      background: color,
+                      display: 'inline-block',
+                      marginLeft: index % 5 === 0 ? 0 : -7,
+                      marginTop: index < 5 ? 9 : 2
                     }}
-                  ></div>
-                </div>
-            </Select.Option>
-              ))}
+                  >
+                    <div
+                      className={
+                        edgeTypeStore.newEdgeType.style.color === color
+                          ? 'new-vertex-type-options-border'
+                          : 'new-vertex-type-options-no-border'
+                      }
+                    >
+                      <div
+                        className="new-vertex-type-options-color"
+                        style={{
+                          background: color
+                        }}
+                      ></div>
+                    </div>
+                  </Select.Option>
+                )
+              )}
             </Select>
-            </div>
-            <div className="new-vertex-type-options-colors">
-            <Select   
+          </div>
+          <div className="new-vertex-type-options-colors">
+            <Select
               width={66}
               size="medium"
-              value={edgeTypeStore.newEdgeType.style.with_arrow ? (<div><img src={NoSelectedSoilidArrowIcon} /></div>) : (<div><img src={NoSelectedSoilidStraightIcon} /></div>)}
+              value={
+                edgeTypeStore.newEdgeType.style.with_arrow ? (
+                  <div>
+                    <img src={NoSelectedSoilidArrowIcon} />
+                  </div>
+                ) : (
+                  <div>
+                    <img src={NoSelectedSoilidStraightIcon} />
+                  </div>
+                )
+              }
               onChange={(e: any) => {
                 edgeTypeStore.mutateNewEdgeType({
                   ...edgeTypeStore.newEdgeType,
                   style: {
                     ...edgeTypeStore.newEdgeType.style,
-                    with_arrow: (e[0] && (e[1] === "solid"))
+                    with_arrow: e[0] && e[1] === 'solid'
                   }
                 });
               }}
             >
               {edgeTypeStore.edgeShapeSchemas.map((item, index) => (
-                <Select.Option value={[item.flag, item.shape]} key={item.flag} style={{width: 66}}>
+                <Select.Option
+                  value={[item.flag, item.shape]}
+                  key={item.flag}
+                  style={{ width: 66 }}
+                >
                   <div
                     className="new-vertex-type-options-color"
                     style={{
                       marginTop: 6
                     }}
                   >
-                    <img src={edgeTypeStore.newEdgeType.style.with_arrow === item.flag ? item.blueicon : item.blackicon} alt="toogleEdgeArrow" />
+                    <img
+                      src={
+                        edgeTypeStore.newEdgeType.style.with_arrow === item.flag
+                          ? item.blueicon
+                          : item.blackicon
+                      }
+                      alt="toogleEdgeArrow"
+                    />
                   </div>
                 </Select.Option>
               ))}
             </Select>
-            </div>
-            <div className="new-vertex-type-options-colors">
-            <Select  
+          </div>
+          <div className="new-vertex-type-options-colors">
+            <Select
               width={66}
               size="medium"
               value={edgeTypeStore.newEdgeType.style.thickness}
@@ -191,19 +230,24 @@ const NewVertexType: React.FC = observer(() => {
               }}
             >
               {edgeTypeStore.thicknessSchemas.map((value, index) => (
-                <Select.Option value={value.en} key={value.en} style={{width: 66}}>
+                <Select.Option
+                  value={value.en}
+                  key={value.en}
+                  style={{ width: 66 }}
+                >
                   <div
                     className="new-vertex-type-options-color"
                     style={{
                       marginTop: 6
                     }}
-                  >{value.ch}</div>
+                  >
+                    {value.ch}
+                  </div>
                 </Select.Option>
               ))}
             </Select>
           </div>
         </div>
-        
 
         <div className="new-vertex-type-options">
           <div className="new-vertex-type-options-name">
@@ -485,55 +529,56 @@ const NewVertexType: React.FC = observer(() => {
           </div>
         )}
 
-          <div className="new-vertex-type-options">
-            <div className="new-vertex-type-options-name">
-              <span className="metdata-essential-form-options">*</span>
-              <span>边展示内容：</span>
-            </div>
-            <Select
-              width={420}
-              mode="multiple"
-              size="medium"
-              placeholder="请选择边展示内容"
-              showSearch={false}
-              onChange={(value: string[]) => { 
-                edgeTypeStore.mutateNewEdgeType({
-                  ...edgeTypeStore.newEdgeType,
-                  style: {
-                    ...edgeTypeStore.newEdgeType.style,
-                    display_fields: value,
-                  }
+        <div className="new-vertex-type-options">
+          <div className="new-vertex-type-options-name">
+            <span className="metdata-essential-form-options">*</span>
+            <span>边展示内容：</span>
+          </div>
+          <Select
+            width={420}
+            mode="multiple"
+            size="medium"
+            placeholder="请选择边展示内容"
+            showSearch={false}
+            onChange={(value: string[]) => {
+              edgeTypeStore.mutateNewEdgeType({
+                ...edgeTypeStore.newEdgeType,
+                style: {
+                  ...edgeTypeStore.newEdgeType.style,
+                  display_fields: value
+                }
+              });
+
+              edgeTypeStore.validateAllNewEdgeType(true);
+              edgeTypeStore.validateNewEdgeType('displayFeilds');
+            }}
+            value={edgeTypeStore.newEdgeType.style.display_fields}
+          >
+            {edgeTypeStore.newEdgeType.properties
+              .concat({ name: '边类型', nullable: false })
+              .filter(({ nullable }) => !nullable)
+              .map(item => {
+                const order = edgeTypeStore.newEdgeType.style.display_fields.findIndex(
+                  name => name === item.name
+                );
+
+                const multiSelectOptionClassName = classnames({
+                  'metadata-configs-sorted-multiSelect-option': true,
+                  'metadata-configs-sorted-multiSelect-option-selected':
+                    order !== -1
                 });
 
-                edgeTypeStore.validateAllNewEdgeType(true);
-                edgeTypeStore.validateNewEdgeType('displayFeilds');
-              }}
-              value={edgeTypeStore.newEdgeType.style.display_fields}
-            >
-              {edgeTypeStore.newEdgeType.properties.concat({name: '边类型', nullable: false})
-                .filter(({ nullable }) => !nullable)
-                .map(item => {
-                  const order = edgeTypeStore.newEdgeType.style.display_fields.findIndex(
-                    name => name === item.name
-                  );
-
-                  const multiSelectOptionClassName = classnames({
-                    'metadata-configs-sorted-multiSelect-option': true,
-                    'metadata-configs-sorted-multiSelect-option-selected':
-                      order !== -1
-                  });
-
-                  return (
-                    <Select.Option value={item.name} key={item.name}>
-                      <div className={multiSelectOptionClassName}>
-                        <div>{order !== -1 ? order + 1 : ''}</div>
-                        <div>{item.name}</div>
-                      </div>
-                    </Select.Option>
-                  );
-                })}
-            </Select>
-          </div>
+                return (
+                  <Select.Option value={item.name} key={item.name}>
+                    <div className={multiSelectOptionClassName}>
+                      <div>{order !== -1 ? order + 1 : ''}</div>
+                      <div>{item.name}</div>
+                    </div>
+                  </Select.Option>
+                );
+              })}
+          </Select>
+        </div>
 
         <div
           className="metadata-title new-vertex-type-title"

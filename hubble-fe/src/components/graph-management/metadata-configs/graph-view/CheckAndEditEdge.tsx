@@ -391,17 +391,24 @@ const CheckAndEditEdge: React.FC = observer(() => {
                     style: {
                       color: value,
                       icon: null,
-                      with_arrow: edgeTypeStore.editedSelectedEdgeType.style.with_arrow !== 
+                      with_arrow:
+                        edgeTypeStore.editedSelectedEdgeType.style
+                          .with_arrow !== null
+                          ? edgeTypeStore.editedSelectedEdgeType.style
+                              .with_arrow
+                          : edgeTypeStore.selectedEdgeType!.style.with_arrow,
+                      thickness:
+                        edgeTypeStore.editedSelectedEdgeType.style.thickness !==
                         null
-                        ? edgeTypeStore.editedSelectedEdgeType.style.with_arrow
-                        : edgeTypeStore.selectedEdgeType!.style.with_arrow,
-                      thickness: edgeTypeStore.editedSelectedEdgeType.style.thickness !==
-                        null 
-                        ? edgeTypeStore.editedSelectedEdgeType.style.thickness
-                        : edgeTypeStore.selectedEdgeType!.style.thickness,
-                        display_fields: edgeTypeStore.editedSelectedEdgeType.style.display_fields.length !== 0
-                          ? edgeTypeStore.editedSelectedEdgeType.style.display_fields
-                          : edgeTypeStore.editedSelectedEdgeType!.style.display_fields,
+                          ? edgeTypeStore.editedSelectedEdgeType.style.thickness
+                          : edgeTypeStore.selectedEdgeType!.style.thickness,
+                      display_fields:
+                        edgeTypeStore.editedSelectedEdgeType.style
+                          .display_fields.length !== 0
+                          ? edgeTypeStore.editedSelectedEdgeType.style
+                              .display_fields
+                          : edgeTypeStore.editedSelectedEdgeType!.style
+                              .display_fields
                     }
                   });
                 }}

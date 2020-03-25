@@ -22,6 +22,8 @@ import FullScreenIcon from '../../../../assets/imgs/ic_quanping_16.svg';
 import ResetScreenIcon from '../../../../assets/imgs/ic_tuichuquanping_16.svg';
 import LoadingBackIcon from '../../../../assets/imgs/ic_loading_back.svg';
 import LoadingFrontIcon from '../../../../assets/imgs/ic_loading_front.svg';
+import { EdgeTypeStore } from '../../../../stores/GraphManagementStore/metadataConfigsStore/edgeTypeStore';
+import { allowStateReadsStart } from 'mobx/lib/internal';
 
 export interface GraphQueryResult {
   hidden: boolean;
@@ -70,7 +72,7 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
         nodes: graphNodes,
         edges: graphEdges
       };
-
+      console.log('dddddddd', dataAnalyzeStore.nodeCount);
       setVisGraphNodes(graphNodes);
       setVisGraphEdges(graphEdges);
 
@@ -78,19 +80,22 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
         width,
         height,
         nodes: {
-          shape: 'dot',
+          shape: 'dot'
         },
         edges: {
           arrowStrikethrough: false,
-          width: 1.5,
+          // width: 1.5,
           color: {
             color: 'rgba(92, 115, 230, 0.8)',
             hover: 'rgba(92, 115, 230, 1)',
             highlight: 'rgba(92, 115, 230, 1)'
           },
-          scaling:{   
-            min:1,
-            max:4
+          scaling: {
+            min: 1,
+            max: 3,
+            label: {
+              enabled: false
+            }
           }
         },
         interaction: {
@@ -100,7 +105,11 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
           maxVelocity: 50,
           solver: 'forceAtlas2Based',
           timestep: 0.3,
-          stabilization: { iterations: 150 }
+          stabilization: { iterations: 150 },
+          // forceAtlas2Based: { gravitationalConstant: -180 }
+          forceAtlas2Based: {
+            gravitationalConstant: Math.log(dataAnalyzeStore.nodeCount) * -50
+          }
         }
       };
 
@@ -195,7 +204,6 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
         network.on('doubleClick', async ({ nodes }) => {
           clearTimeout(timer);
           dataAnalyzeStore.switchClickOnNodeOrEdge(false);
-
           if (!isEmpty(nodes)) {
             const nodeId = nodes[0];
             const node = dataAnalyzeStore.graphData.data.graph_view.vertices.find(
@@ -208,14 +216,59 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
               if (
                 dataAnalyzeStore.requestStatus.expandGraphNode === 'success'
               ) {
-                dataAnalyzeStore.expandedGraphData.data.graph_view.vertices.forEach(
-                  ({ id, label, properties }) => {
-                    graphNodes.add({
-                      id,
-                      label: id.length <= 15 ? id : id.slice(0, 15) + '...',
-                      vLabel: label,
-                      properties,
-                      title: `
+                let cloneVertices = [
+                  ...dataAnalyzeStore.expandedGraphData.data.graph_view.vertices
+                ];
+                cloneVertices.forEach(({ id, label, properties }) => {
+                  let cloneProperties = { ...properties };
+                  cloneProperties['顶点ID'] = id;
+                  let labelWords = '';
+                  let flag = true;
+                  if (
+                    id !== 'hiddenNodeOne' &&
+                    id !== 'hiddenNodeTwo' &&
+                    id !== 'hiddenNodeThree'
+                  ) {
+                    let arr = Object.entries(
+                      dataAnalyzeStore.vertexWritingMappings[label]
+                    ).map(([key, value]) => {
+                      return `${value}`;
+                    });
+
+                    for (let item of arr) {
+                      if (cloneProperties[item]) {
+                        if (flag) {
+                          labelWords += cloneProperties[item];
+                          flag = false;
+                          continue;
+                        }
+                        labelWords += '-' + cloneProperties[item];
+                      }
+                    }
+                  }
+
+                  graphNodes.add({
+                    id,
+                    label:
+                      labelWords.length <= 15
+                        ? labelWords
+                        : labelWords.slice(0, 15) + '...',
+                    vLabel: id.length <= 15 ? id : id.slice(0, 15) + '...',
+                    value:
+                      dataAnalyzeStore.vertexSizeMappings[label] === 'HUGE' ||
+                      id === 'hiddenNodeOne'
+                        ? 40
+                        : dataAnalyzeStore.vertexSizeMappings[label] === 'BIG'
+                        ? 30
+                        : dataAnalyzeStore.vertexSizeMappings[label] ===
+                          'NORMAL'
+                        ? 20
+                        : dataAnalyzeStore.vertexSizeMappings[label] === 'SMALL'
+                        ? 10
+                        : 1,
+                    font: { size: 16 },
+                    properties,
+                    title: `
                           <div class="tooltip-fields">
                             <div>顶点类型：</div>
                             <div>${label}</div>
@@ -233,73 +286,121 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
                             })
                             .join('')}
                         `,
-                      color: {
-                        background:
-                          dataAnalyzeStore.colorMappings[label] || '#5c73e6',
-                        border:
-                          dataAnalyzeStore.colorMappings[label] || '#5c73e6',
-                        highlight: {
-                          background: '#fb6a02',
-                          border: '#fb6a02'
-                        },
-                        hover: { background: '#ec3112', border: '#ec3112' }
+                    hidden:
+                      id !== 'hiddenNodeOne' &&
+                      id !== 'hiddenNodeTwo' &&
+                      id !== 'hiddenNodeThree'
+                        ? false
+                        : true,
+                    color: {
+                      background:
+                        dataAnalyzeStore.vertexColorMappings[label] ||
+                        '#5c73e6',
+                      border:
+                        dataAnalyzeStore.vertexColorMappings[label] ||
+                        '#5c73e6',
+                      highlight: {
+                        background: '#fb6a02',
+                        border: '#fb6a02'
                       },
-                      chosen: {
-                        node(
-                          values: any,
-                          id: string,
-                          selected: boolean,
-                          hovering: boolean
-                        ) {
-                          if (hovering || selected) {
-                            values.shadow = true;
-                            values.shadowColor = 'rgba(0, 0, 0, 0.6)';
-                            values.shadowX = 0;
-                            values.shadowY = 0;
-                            values.shadowSize = 25;
-                          }
+                      hover: { background: '#ec3112', border: '#ec3112' }
+                    },
+                    chosen: {
+                      node(
+                        values: any,
+                        id: string,
+                        selected: boolean,
+                        hovering: boolean
+                      ) {
+                        if (hovering || selected) {
+                          values.shadow = true;
+                          values.shadowColor = 'rgba(0, 0, 0, 0.6)';
+                          values.shadowX = 0;
+                          values.shadowY = 0;
+                          values.shadowSize = 25;
+                        }
 
-                          if (selected) {
-                            values.size = 30;
-                          }
+                        if (selected) {
+                          values.size += 5;
                         }
                       }
-                    });
-                  }
-                );
+                    }
+                  });
+                });
 
                 dataAnalyzeStore.expandedGraphData.data.graph_view.edges.forEach(
-                  edge => {
+                  ({ id, label, source, target, properties }) => {
+                    let cloneProperties = { ...properties };
+                    cloneProperties['边类型'] = label;
+                    let labelWords = '';
+                    let flag = true;
+                    if (id !== 'hiddenEdgeOne' && id !== 'hiddenEdgeTwo') {
+                      let arr = Object.entries(
+                        dataAnalyzeStore.edgeWritingMappings[label]
+                      ).map(([key, value]) => {
+                        return `${value}`;
+                      });
+
+                      for (let item of arr) {
+                        if (cloneProperties[item]) {
+                          if (flag) {
+                            labelWords += cloneProperties[item];
+                            flag = false;
+                            continue;
+                          }
+                          labelWords += '-' + cloneProperties[item];
+                        }
+                      }
+                    }
+
                     graphEdges.add({
-                      ...edge,
-                      from: edge.source,
-                      to: edge.target,
-                      font: {
-                        color: '#666'
-                      },
+                      id,
+                      label:
+                        labelWords.length <= 15
+                          ? labelWords
+                          : labelWords.slice(0, 15) + '...',
+                      properties,
+                      source,
+                      target,
+                      from: source,
+                      to: target,
+                      font: { size: 16, strokeWidth: 0, color: '#666' },
+                      arrows:
+                        dataAnalyzeStore.edgeWithArrowMappings[label] === true
+                          ? 'to'
+                          : '',
+                      value:
+                        dataAnalyzeStore.edgeThicknessMappings[label] ===
+                        'THICK'
+                          ? 35
+                          : dataAnalyzeStore.edgeThicknessMappings[label] ===
+                            'NORMAL'
+                          ? 15
+                          : id === 'hiddenEdgeOne'
+                          ? 35
+                          : 1,
                       title: `
-                          <div class="tooltip-fields">
-                            <div>边类型：</div>
-                            <div>${edge.label}</div>
-                          </div>
-                          <div class="tooltip-fields">
-                            <div>边ID：</div>
-                            <div>${edge.id}</div>
-                          </div>
-                          ${Object.entries(edge.properties)
-                            .map(([key, value]) => {
-                              return `<div class="tooltip-fields">
-                                        <div>${key}: </div>
-                                        <div>${value}</div>
-                                      </div>`;
-                            })
-                            .join('')}
-                        `,
+                              <div class="tooltip-fields">
+                                <div>边类型：</div>
+                              <div>${label}</div>
+                              </div>
+                              <div class="tooltip-fields">
+                                <div>边ID：</div>
+                                <div>${id}</div>
+                              </div>
+                            ${Object.entries(properties)
+                              .map(([key, value]) => {
+                                return `<div class="tooltip-fields">
+                                            <div>${key}: </div>
+                                            <div>${value}</div>
+                                          </div>`;
+                              })
+                              .join('')}
+                            `,
                       color: {
-                        color: dataAnalyzeStore.edgeColorMappings[edge.label],
-                        highlight:
-                          dataAnalyzeStore.edgeColorMappings[edge.label],
-                        hover: dataAnalyzeStore.edgeColorMappings[edge.label]
+                        color: dataAnalyzeStore.edgeColorMappings[label],
+                        highlight: dataAnalyzeStore.edgeColorMappings[label],
+                        hover: dataAnalyzeStore.edgeColorMappings[label]
                       }
                     });
                   }
@@ -451,7 +552,8 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
                         borderRadius: 5,
                         marginRight: 5,
                         backgroundColor:
-                          dataAnalyzeStore.vertexColorMappings[label] || '#5c73e6'
+                          dataAnalyzeStore.vertexColorMappings[label] ||
+                          '#5c73e6'
                       }}
                     ></div>
                     <div>{label}</div>
@@ -634,34 +736,86 @@ const GraphPopover: React.FC<{
             if (dataAnalyzeStore.requestStatus.expandGraphNode === 'success') {
               dataAnalyzeStore.expandedGraphData.data.graph_view.vertices.forEach(
                 ({ id, label, properties }) => {
+                  let cloneProperties = { ...properties };
+                  cloneProperties['顶点ID'] = id;
+                  let labelWords = '';
+                  let flag = true;
+
+                  if (
+                    id !== 'hiddenNodeOne' &&
+                    id !== 'hiddenNodeTwo' &&
+                    id !== 'hiddenNodeThree'
+                  ) {
+                    let arr = Object.entries(
+                      dataAnalyzeStore.vertexWritingMappings[label]
+                    ).map(([key, value]) => {
+                      return `${value}`;
+                    });
+
+                    for (let item of arr) {
+                      if (cloneProperties[item]) {
+                        if (flag) {
+                          labelWords += cloneProperties[item];
+                          flag = false;
+                          continue;
+                        }
+                        labelWords += '-' + cloneProperties[item];
+                      }
+                    }
+                  }
+
                   visGraphNodes.add({
                     id,
-                    label: id.length <= 15 ? id : id.slice(0, 15) + '...',
-                    vLabel: label,
+                    label:
+                      labelWords.length <= 15
+                        ? labelWords
+                        : labelWords.slice(0, 15) + '...',
+                    vLabel: id.length <= 15 ? id : id.slice(0, 15) + '...',
+                    value:
+                      dataAnalyzeStore.vertexSizeMappings[label] === 'HUGE' ||
+                      id === 'hiddenNodeOne'
+                        ? 40
+                        : dataAnalyzeStore.vertexSizeMappings[label] === 'BIG'
+                        ? 30
+                        : dataAnalyzeStore.vertexSizeMappings[label] ===
+                          'NORMAL'
+                        ? 20
+                        : dataAnalyzeStore.vertexSizeMappings[label] === 'SMALL'
+                        ? 10
+                        : 1,
+                    font: { size: 16 },
                     properties,
                     title: `
-                      <div class="tooltip-fields">
-                        <div>顶点类型：</div>
-                        <div>${label}</div>
-                      </div>
-                      <div class="tooltip-fields">
-                        <div>顶点ID：</div>
-                        <div>${id}</div>
-                      </div>
-                      ${Object.entries(properties)
-                        .map(([key, value]) => {
-                          return `<div class="tooltip-fields">
-                                    <div>${key}: </div>
-                                    <div>${value}</div>
-                                  </div>`;
-                        })
-                        .join('')}
-                    `,
+                        <div class="tooltip-fields">
+                          <div>顶点类型：</div>
+                          <div>${label}</div>
+                        </div>
+                        <div class="tooltip-fields">
+                          <div>顶点ID：</div>
+                          <div>${id}</div>
+                        </div>
+                        ${Object.entries(properties)
+                          .map(([key, value]) => {
+                            return `<div class="tooltip-fields">
+                                      <div>${key}: </div>
+                                      <div>${value}</div>
+                                    </div>`;
+                          })
+                          .join('')}
+                      `,
+                    hidden:
+                      id !== 'hiddenNodeOne' &&
+                      id !== 'hiddenNodeTwo' &&
+                      id !== 'hiddenNodeThree'
+                        ? false
+                        : true,
                     color: {
                       background:
-                        dataAnalyzeStore.colorMappings[label] || '#5c73e6',
+                        dataAnalyzeStore.vertexColorMappings[label] ||
+                        '#5c73e6',
                       border:
-                        dataAnalyzeStore.colorMappings[label] || '#5c73e6',
+                        dataAnalyzeStore.vertexColorMappings[label] ||
+                        '#5c73e6',
                       highlight: {
                         background: '#fb6a02',
                         border: '#fb6a02'
@@ -684,46 +838,9 @@ const GraphPopover: React.FC<{
                         }
 
                         if (selected) {
-                          values.size = 30;
+                          values.size += 5;
                         }
                       }
-                    }
-                  });
-                }
-              );
-
-              dataAnalyzeStore.expandedGraphData.data.graph_view.edges.forEach(
-                edge => {
-                  visGraphEdges.add({
-                    ...edge,
-                    from: edge.source,
-                    to: edge.target,
-                    font: {
-                      color: '#666'
-                    },
-                    title: `
-                      <div class="tooltip-fields">
-                        <div>边类型：</div>
-                        <div>${edge.label}</div>
-                      </div>
-                      <div class="tooltip-fields">
-                        <div>边ID：</div>
-                        <div>${edge.id}</div>
-                      </div>
-                      ${Object.entries(edge.properties)
-                        .map(([key, value]) => {
-                          return `<div class="tooltip-fields">
-                                    <div>${key}: </div>
-                                    <div>${value}</div>
-                                  </div>
-                                `;
-                        })
-                        .join('')}
-                    `,
-                    color: {
-                      color: dataAnalyzeStore.edgeColorMappings[edge.label],
-                      highlight: dataAnalyzeStore.edgeColorMappings[edge.label],
-                      hover: dataAnalyzeStore.edgeColorMappings[edge.label]
                     }
                   });
                 }

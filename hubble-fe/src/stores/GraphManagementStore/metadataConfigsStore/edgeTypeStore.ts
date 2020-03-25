@@ -71,18 +71,28 @@ export class EdgeTypeStore {
     '#108cee',
     '#00b5d9',
     '#f2ca00',
-    '#e048ae',
+    '#e048ae'
   ];
 
-  @observable.ref edgeShapeSchemas = [ 
-    {blackicon: NoSelectedSolidArrowIcon, blueicon: SelectedSolidArrowIcon, flag: true, shape: "solid"},
-    {blackicon: NoSelectedSolidStraightIcon, blueicon: SelectedSolidStraightIcon, flag: false, shape: "solid"},
+  @observable.ref edgeShapeSchemas = [
+    {
+      blackicon: NoSelectedSolidArrowIcon,
+      blueicon: SelectedSolidArrowIcon,
+      flag: true,
+      shape: 'solid'
+    },
+    {
+      blackicon: NoSelectedSolidStraightIcon,
+      blueicon: SelectedSolidStraightIcon,
+      flag: false,
+      shape: 'solid'
+    }
   ];
 
   @observable.ref thicknessSchemas = [
-    {ch: '粗', en: 'THICK'},
-    {ch: '中', en: 'NORMAL'},
-    {ch: '细', en: 'FINE'}
+    { ch: '粗', en: 'THICK' },
+    { ch: '中', en: 'NORMAL' },
+    { ch: '细', en: 'FINE' }
   ];
 
   @observable edgeTypeListPageConfig: PageConfig = {
@@ -91,7 +101,7 @@ export class EdgeTypeStore {
     sort: ''
   };
 
-  @observable.shallow newEdgeType: EdgeType = { 
+  @observable.shallow newEdgeType: EdgeType = {
     name: '',
     source_label: '',
     target_label: '',
@@ -105,7 +115,7 @@ export class EdgeTypeStore {
       icon: null,
       with_arrow: true,
       thickness: 'NORMAL',
-      display_fields: ['边类型'],
+      display_fields: ['边类型']
     }
   };
 
@@ -122,7 +132,7 @@ export class EdgeTypeStore {
       icon: null,
       with_arrow: null,
       thickness: null,
-      display_fields: [],
+      display_fields: []
     }
   };
 
@@ -157,7 +167,7 @@ export class EdgeTypeStore {
     properties: '',
     sortKeys: '',
     propertyIndexes: [],
-    displayFeilds: [],  
+    displayFeilds: []
   };
 
   @observable.shallow validateEditEdgeTypeErrorMessage: Record<
@@ -269,7 +279,7 @@ export class EdgeTypeStore {
         icon: null,
         with_arrow: true,
         thickness: 'NORMAL',
-        display_fields: ['边类型'],
+        display_fields: ['边类型']
       }
     };
   }
@@ -290,7 +300,7 @@ export class EdgeTypeStore {
         icon: null,
         with_arrow: null,
         thickness: null,
-        display_fields: [],
+        display_fields: []
       }
     };
 
@@ -1170,7 +1180,7 @@ export class EdgeTypeStore {
         icon: null,
         with_arrow: null,
         thickness: null,
-        display_fields: [],
+        display_fields: []
       }
     };
     this.resetValidateNewEdgeTypeMessage();
@@ -1195,9 +1205,9 @@ export class EdgeTypeStore {
         : this.metadataConfigsRootStore.currentId;
 
     try {
-      const result: AxiosResponse<
-        responseData<EdgeTypeListResponse>
-      > = yield axios
+      const result: AxiosResponse<responseData<
+        EdgeTypeListResponse
+      >> = yield axios
         .get(`${baseUrl}/${conn_id}/schema/edgelabels`, {
           params: {
             page_no: this.edgeTypeListPageConfig.pageNumber,
@@ -1354,9 +1364,9 @@ export class EdgeTypeStore {
     this.requestStatus.checkConflict = 'pending';
 
     try {
-      const result: AxiosResponse<
-        responseData<CheckedReusableData>
-      > = yield axios
+      const result: AxiosResponse<responseData<
+        CheckedReusableData
+      >> = yield axios
         .post(
           `${baseUrl}/${this.metadataConfigsRootStore.currentId}/schema/edgelabels/check_conflict`,
           {
@@ -1393,9 +1403,9 @@ export class EdgeTypeStore {
     this.requestStatus.recheckConflict = 'pending';
 
     try {
-      const result: AxiosResponse<
-        responseData<CheckedReusableData>
-      > = yield axios
+      const result: AxiosResponse<responseData<
+        CheckedReusableData
+      >> = yield axios
         .post(
           `${baseUrl}/${this.metadataConfigsRootStore.currentId}/schema/edgelabels/recheck_conflict`,
           {

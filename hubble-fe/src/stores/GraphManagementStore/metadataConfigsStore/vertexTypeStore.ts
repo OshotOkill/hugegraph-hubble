@@ -65,18 +65,18 @@ export class VertexTypeStore {
     '#108cee',
     '#00b5d9',
     '#f2ca00',
-    '#e048ae',
+    '#e048ae'
   ];
 
   @observable.ref vertexSizeSchemas = [
-    {ch: '超小', en: 'TINY'},
-    {ch: '小', en: 'SMALL'},
-    {ch: '中', en: 'NORMAL'},
-    {ch: '大', en: 'BIG'},
-    {ch: '超大', en: 'HUGE'}
+    { ch: '超小', en: 'TINY' },
+    { ch: '小', en: 'SMALL' },
+    { ch: '中', en: 'NORMAL' },
+    { ch: '大', en: 'BIG' },
+    { ch: '超大', en: 'HUGE' }
   ];
 
-  @observable.shallow newVertexType: VertexType = {  
+  @observable.shallow newVertexType: VertexType = {
     name: '',
     id_strategy: 'PRIMARY_KEY',
     properties: [],
@@ -86,8 +86,8 @@ export class VertexTypeStore {
     style: {
       color: '#5c73e6',
       icon: null,
-      size: 'NORMAL',  
-      display_fields: ['顶点ID']  
+      size: 'NORMAL',
+      display_fields: ['顶点ID']
     }
   };
 
@@ -100,14 +100,14 @@ export class VertexTypeStore {
   @observable isEditReady = true;
 
   @observable.ref selectedVertexType: VertexType | null = null;
-  @observable.ref editedSelectedVertexType: EditVertexTypeParams = {  
+  @observable.ref editedSelectedVertexType: EditVertexTypeParams = {
     append_properties: [],
     append_property_indexes: [],
     remove_property_indexes: [],
     style: {
       color: null,
       icon: null,
-      size: null,   
+      size: null,
       display_fields: []
     }
   };
@@ -141,7 +141,7 @@ export class VertexTypeStore {
     name: '',
     properties: '',
     primaryKeys: '',
-    displayFeilds: '',  
+    displayFeilds: '',
     propertyIndexes: []
   };
 
@@ -400,12 +400,11 @@ export class VertexTypeStore {
       }
     }
 
-    if (category === 'displayFeilds') {  
-      if (
-        this.newVertexType.style.display_fields.length === 0
-      ) {
+    if (category === 'displayFeilds') {
+      if (this.newVertexType.style.display_fields.length === 0) {
         !initial &&
-          (this.validateNewVertexTypeErrorMessage.displayFeilds = '此项为必填项');
+          (this.validateNewVertexTypeErrorMessage.displayFeilds =
+            '此项为必填项');
         isReady = false;
       }
     }

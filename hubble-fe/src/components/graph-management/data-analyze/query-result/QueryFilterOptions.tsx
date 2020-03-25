@@ -208,14 +208,59 @@ const QueryFilterOptions: React.FC<{
               if (
                 dataAnalyzeStore.requestStatus.filteredGraphData === 'success'
               ) {
-                dataAnalyzeStore.expandedGraphData.data.graph_view.vertices.forEach(
-                  ({ id, label, properties }) => {
-                    visGraphNodes.add({
-                      id,
-                      label: id.length <= 15 ? id : id.slice(0, 15) + '...',
-                      vLabel: label,
-                      properties,
-                      title: `
+                let cloneVertices = [
+                  ...dataAnalyzeStore.expandedGraphData.data.graph_view.vertices
+                ];
+                cloneVertices.forEach(({ id, label, properties }) => {
+                  console.log('1111111', id);
+                  let cloneProperties = { ...properties };
+                  cloneProperties['顶点ID'] = id;
+                  let labelWords = '';
+                  let flag = true;
+                  if (
+                    id !== 'hiddenNodeOne' &&
+                    id !== 'hiddenNodeTwo' &&
+                    id !== 'hiddenNodeThree'
+                  ) {
+                    let arr = Object.entries(
+                      dataAnalyzeStore.vertexWritingMappings[label]
+                    ).map(([key, value]) => {
+                      return `${value}`;
+                    });
+                    for (let item of arr) {
+                      if (cloneProperties[item]) {
+                        if (flag) {
+                          labelWords += cloneProperties[item];
+                          flag = false;
+                          continue;
+                        }
+                        labelWords += '-' + cloneProperties[item];
+                      }
+                    }
+                  }
+
+                  visGraphNodes.add({
+                    id,
+                    label:
+                      labelWords.length <= 15
+                        ? labelWords
+                        : labelWords.slice(0, 15) + '...',
+                    vLabel: id.length <= 15 ? id : id.slice(0, 15) + '...',
+                    value:
+                      dataAnalyzeStore.vertexSizeMappings[label] === 'HUGE' ||
+                      id === 'hiddenNodeOne'
+                        ? 40
+                        : dataAnalyzeStore.vertexSizeMappings[label] === 'BIG'
+                        ? 30
+                        : dataAnalyzeStore.vertexSizeMappings[label] ===
+                          'NORMAL'
+                        ? 20
+                        : dataAnalyzeStore.vertexSizeMappings[label] === 'SMALL'
+                        ? 10
+                        : 1,
+                    font: { size: 16 },
+                    properties,
+                    title: `
                           <div class="tooltip-fields">
                             <div>顶点类型：</div>
                             <div>${label}</div>
@@ -229,78 +274,129 @@ const QueryFilterOptions: React.FC<{
                               return `<div class="tooltip-fields">
                                         <div>${key}: </div>
                                         <div>${value}</div>
-                                      </div>
-                                      `;
+                                      </div>`;
                             })
                             .join('')}
                         `,
-                      color: {
-                        background:
-                          dataAnalyzeStore.vertexColorMappings[label] || '#5c73e6',
-                        border:
-                          dataAnalyzeStore.vertexColorMappings[label] || '#5c73e6',
-                        highlight: {
-                          background: '#fb6a02',
-                          border: '#fb6a02'
-                        },
-                        hover: { background: '#ec3112', border: '#ec3112' }
+                    hidden:
+                      id !== 'hiddenNodeOne' &&
+                      id !== 'hiddenNodeTwo' &&
+                      id !== 'hiddenNodeThree'
+                        ? false
+                        : true,
+                    color: {
+                      background:
+                        dataAnalyzeStore.vertexColorMappings[label] ||
+                        '#5c73e6',
+                      border:
+                        dataAnalyzeStore.vertexColorMappings[label] ||
+                        '#5c73e6',
+                      highlight: {
+                        background: '#fb6a02',
+                        border: '#fb6a02'
                       },
-                      chosen: {
-                        node(
-                          values: any,
-                          id: string,
-                          selected: boolean,
-                          hovering: boolean
-                        ) {
-                          if (hovering || selected) {
-                            values.shadow = true;
-                            values.shadowColor = 'rgba(0, 0, 0, 0.6)';
-                            values.shadowX = 0;
-                            values.shadowY = 0;
-                            values.shadowSize = 25;
-                          }
+                      hover: { background: '#ec3112', border: '#ec3112' }
+                    },
+                    chosen: {
+                      node(
+                        values: any,
+                        id: string,
+                        selected: boolean,
+                        hovering: boolean
+                      ) {
+                        if (hovering || selected) {
+                          values.shadow = true;
+                          values.shadowColor = 'rgba(0, 0, 0, 0.6)';
+                          values.shadowX = 0;
+                          values.shadowY = 0;
+                          values.shadowSize = 25;
+                        }
 
-                          if (selected) {
-                            values.size = 30;
-                          }
+                        if (selected) {
+                          values.size += 5;
                         }
                       }
-                    });
-                  }
-                );
+                    }
+                  });
+                });
 
-                dataAnalyzeStore.expandedGraphData.data.graph_view.edges.forEach(
-                  edge => {
+                let cloneEdges = [
+                  ...dataAnalyzeStore.expandedGraphData.data.graph_view.edges
+                ];
+                cloneEdges.forEach(
+                  ({ id, label, source, target, properties }) => {
+                    let cloneProperties = { ...properties };
+                    cloneProperties['边类型'] = label;
+                    let labelWords = '';
+                    let flag = true;
+
+                    if (id !== 'hiddenEdgeOne' && id !== 'hiddenEdgeTwo') {
+                      let arr = Object.entries(
+                        dataAnalyzeStore.edgeWritingMappings[label]
+                      ).map(([key, value]) => {
+                        return `${value}`;
+                      });
+
+                      for (let item of arr) {
+                        if (cloneProperties[item]) {
+                          if (flag) {
+                            labelWords += cloneProperties[item];
+                            flag = false;
+                            continue;
+                          }
+                          labelWords += '-' + cloneProperties[item];
+                        }
+                      }
+                    }
+
                     visGraphEdges.add({
-                      ...edge,
-                      from: edge.source,
-                      to: edge.target,
-                      font: {
-                        color: '#666'
-                      },
+                      id,
+                      label:
+                        labelWords.length <= 15
+                          ? labelWords
+                          : labelWords.slice(0, 15) + '...',
+                      properties,
+                      source,
+                      target,
+                      from: source,
+                      to: target,
+                      font: { size: 16, strokeWidth: 0, color: '#666' },
+                      arrows:
+                        dataAnalyzeStore.edgeWithArrowMappings[label] === true
+                          ? 'to'
+                          : '',
+                      value:
+                        dataAnalyzeStore.edgeThicknessMappings[label] ===
+                        'THICK'
+                          ? 35
+                          : dataAnalyzeStore.edgeThicknessMappings[label] ===
+                            'NORMAL'
+                          ? 15
+                          : id == 'hiddenEdgeOne'
+                          ? 35
+                          : 1,
                       title: `
-                        <div class="tooltip-fields">
-                          <div>边类型：</div>
-                          <div>${edge.label}</div>
-                        </div>
-                        <div class="tooltip-fields">
-                          <div>边ID：</div>
-                          <div>${edge.id}</div>
-                        </div>
-                        ${Object.entries(edge.properties)
-                          .map(([key, value]) => {
-                            return `<div class="tooltip-fields">
-                                      <div>${key}: </div>
-                                      <div>${value}</div>
-                                    </div>`;
-                          })
-                          .join('')}
-                      `,
+                              <div class="tooltip-fields">
+                                <div>边类型：</div>
+                              <div>${label}</div>
+                              </div>
+                              <div class="tooltip-fields">
+                                <div>边ID：</div>
+                                <div>${id}</div>
+                              </div>
+                            ${Object.entries(properties)
+                              .map(([key, value]) => {
+                                return `<div class="tooltip-fields">
+                                            <div>${key}: </div>
+                                            <div>${value}</div>
+                                          </div>`;
+                              })
+                              .join('')}
+                            `,
                       color: {
-                        color: dataAnalyzeStore.edgeColorMappings[edge.label],
-                        highlight:
-                          dataAnalyzeStore.edgeColorMappings[edge.label],
-                        hover: dataAnalyzeStore.edgeColorMappings[edge.label]
+                        color: dataAnalyzeStore.edgeColorMappings[label],
+                        highlight: dataAnalyzeStore.edgeColorMappings[label],
+                        hover: dataAnalyzeStore.edgeColorMappings[label]
                       }
                     });
                   }
