@@ -24,10 +24,10 @@ import TooltipTrigger from 'react-popper-tooltip';
 import MetadataConfigsRootStore from '../../../../stores/GraphManagementStore/metadataConfigsStore/metadataConfigsStore';
 import AddIcon from '../../../../assets/imgs/ic_add.svg';
 import BlueArrowIcon from '../../../../assets/imgs/ic_arrow_blue.svg';
-import SelectedSoilidArrowIcon from '../../../../assets/imgs/ic_arrow_selected.svg'; //选中的箭头
-import NoSelectedSoilidArrowIcon from '../../../../assets/imgs/ic_arrow.svg'; //未选中的箭头
-import SelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight_selected.svg'; //选中的直线
-import NoSelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight.svg'; //未选中的直线
+import SelectedSoilidArrowIcon from '../../../../assets/imgs/ic_arrow_selected.svg';
+import NoSelectedSoilidArrowIcon from '../../../../assets/imgs/ic_arrow.svg';
+import SelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight_selected.svg';
+import NoSelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight.svg';
 import WhiteCloseIcon from '../../../../assets/imgs/ic_close_white.svg';
 import CloseIcon from '../../../../assets/imgs/ic_close_16.svg';
 import LoadingBackIcon from '../../../../assets/imgs/ic_loading_back.svg';

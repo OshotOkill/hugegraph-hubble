@@ -21,10 +21,10 @@ import TooltipTrigger from 'react-popper-tooltip';
 import HintIcon from '../../../../assets/imgs/ic_question_mark.svg';
 
 import BlueArrowIcon from '../../../../assets/imgs/ic_arrow_blue.svg';
-import SelectedSoilidArrowIcon from '../../../../assets/imgs/ic_arrow_selected.svg'; //选中的箭头
-import NoSelectedSoilidArrowIcon from '../../../../assets/imgs/ic_arrow.svg'; //未选中的箭头
-import SelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight_selected.svg'; //选中的直线
-import NoSelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight.svg'; //未选中的直线
+import SelectedSoilidArrowIcon from '../../../../assets/imgs/ic_arrow_selected.svg';
+import NoSelectedSoilidArrowIcon from '../../../../assets/imgs/ic_arrow.svg';
+import SelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight_selected.svg';
+import NoSelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight.svg';
 import closeIcon from '../../../../assets/imgs/ic_close_16.svg';
 import MetadataConfigsRootStore from '../../../../stores/GraphManagementStore/metadataConfigsStore/metadataConfigsStore';
 import { EdgeTypeValidatePropertyIndexes } from '../../../../stores/types/GraphManagementStore/metadataConfigsStore';

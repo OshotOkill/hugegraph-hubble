@@ -212,7 +212,6 @@ const QueryFilterOptions: React.FC<{
                   ...dataAnalyzeStore.expandedGraphData.data.graph_view.vertices
                 ];
                 cloneVertices.forEach(({ id, label, properties }) => {
-                  console.log('1111111', id);
                   let cloneProperties = { ...properties };
                   cloneProperties['顶点ID'] = id;
                   let labelWords = '';
@@ -360,7 +359,11 @@ const QueryFilterOptions: React.FC<{
                       target,
                       from: source,
                       to: target,
-                      font: { size: 16, strokeWidth: 0, color: '#666' },
+                      font: {
+                        size: 16,
+                        strokeWidth: 0,
+                        color: '#666'
+                      },
                       arrows:
                         dataAnalyzeStore.edgeWithArrowMappings[label] === true
                           ? 'to'

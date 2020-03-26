@@ -72,7 +72,7 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
         nodes: graphNodes,
         edges: graphEdges
       };
-      console.log('dddddddd', dataAnalyzeStore.nodeCount);
+
       setVisGraphNodes(graphNodes);
       setVisGraphEdges(graphEdges);
 
@@ -106,9 +106,8 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
           solver: 'forceAtlas2Based',
           timestep: 0.3,
           stabilization: { iterations: 150 },
-          // forceAtlas2Based: { gravitationalConstant: -180 }
           forceAtlas2Based: {
-            gravitationalConstant: Math.log(dataAnalyzeStore.nodeCount) * -50
+            gravitationalConstant: Math.log(dataAnalyzeStore.nodeCount) * -60
           }
         }
       };
@@ -364,7 +363,11 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
                       target,
                       from: source,
                       to: target,
-                      font: { size: 16, strokeWidth: 0, color: '#666' },
+                      font: {
+                        size: 16,
+                        strokeWidth: 0,
+                        color: '#666'
+                      },
                       arrows:
                         dataAnalyzeStore.edgeWithArrowMappings[label] === true
                           ? 'to'
