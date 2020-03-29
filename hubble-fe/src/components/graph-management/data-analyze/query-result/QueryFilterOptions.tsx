@@ -5,6 +5,7 @@ import vis from 'vis-network';
 import { Message } from '@baidu/one-ui';
 
 import { DataAnalyzeStoreContext } from '../../../../stores';
+import { cloneDeep } from 'lodash-es';
 
 const getRuleOptions = (ruleType: string = '') => {
   switch (ruleType.toLowerCase()) {
@@ -208,9 +209,9 @@ const QueryFilterOptions: React.FC<{
               if (
                 dataAnalyzeStore.requestStatus.filteredGraphData === 'success'
               ) {
-                let cloneVertices = [
-                  ...dataAnalyzeStore.expandedGraphData.data.graph_view.vertices
-                ];
+                let cloneVertices = cloneDeep(
+                  dataAnalyzeStore.expandedGraphData.data.graph_view.vertices
+                );
                 cloneVertices.forEach(({ id, label, properties }) => {
                   let cloneProperties = { ...properties };
                   cloneProperties['顶点ID'] = id;
@@ -224,7 +225,7 @@ const QueryFilterOptions: React.FC<{
                     let arr = Object.entries(
                       dataAnalyzeStore.vertexWritingMappings[label]
                     ).map(([key, value]) => {
-                      return `${value}`;
+                      return value;
                     });
                     for (let item of arr) {
                       if (cloneProperties[item]) {

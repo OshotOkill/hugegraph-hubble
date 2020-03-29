@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { observable, action, flow, computed, runInAction } from 'mobx';
 import axios, { AxiosResponse } from 'axios';
-import { isUndefined } from 'lodash-es';
+import { isUndefined, cloneDeep } from 'lodash-es';
 
 import {
   GraphData,
@@ -230,7 +230,9 @@ export class DataAnalyzeStore {
   };
 
   @computed get graphNodes(): GraphNode[] {
-    let cloneVertices = [...this.originalGraphData.data.graph_view.vertices];
+    let cloneVertices = cloneDeep(
+      this.originalGraphData.data.graph_view.vertices
+    );
     cloneVertices.push({
       id: 'hiddenNodeOne',
       label: 'hiddenNodeLabelOne',
@@ -264,7 +266,7 @@ export class DataAnalyzeStore {
       ) {
         let arr = Object.entries(this.vertexWritingMappings[label]).map(
           ([key, value]) => {
-            return `${value}`;
+            return value;
           }
         );
 
@@ -374,7 +376,7 @@ export class DataAnalyzeStore {
       if (id !== 'hiddenEdgeOne' && id !== 'hiddenEdgeTwo') {
         let arr = Object.entries(this.edgeWritingMappings[label]).map(
           ([key, value]) => {
-            return `${value}`;
+            return value;
           }
         );
         for (let item of arr) {
@@ -398,7 +400,6 @@ export class DataAnalyzeStore {
         properties,
         source,
         target,
-        // length: 150,
         from: source,
         to: target,
         font: { size: 16, strokeWidth: 0, color: '#666' },

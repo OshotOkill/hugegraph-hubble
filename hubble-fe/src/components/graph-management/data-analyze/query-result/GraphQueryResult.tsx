@@ -6,7 +6,7 @@ import React, {
   useCallback
 } from 'react';
 import { observer } from 'mobx-react';
-import { isUndefined, isEmpty } from 'lodash-es';
+import { isUndefined, isEmpty, cloneDeep } from 'lodash-es';
 import { saveAs } from 'file-saver';
 import vis from 'vis-network';
 import 'vis-network/styles/vis-network.min.css';
@@ -84,7 +84,6 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
         },
         edges: {
           arrowStrikethrough: false,
-          // width: 1.5,
           color: {
             color: 'rgba(92, 115, 230, 0.8)',
             hover: 'rgba(92, 115, 230, 1)',
@@ -215,9 +214,9 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
               if (
                 dataAnalyzeStore.requestStatus.expandGraphNode === 'success'
               ) {
-                let cloneVertices = [
-                  ...dataAnalyzeStore.expandedGraphData.data.graph_view.vertices
-                ];
+                let cloneVertices = cloneDeep(
+                  dataAnalyzeStore.expandedGraphData.data.graph_view.vertices
+                );
                 cloneVertices.forEach(({ id, label, properties }) => {
                   let cloneProperties = { ...properties };
                   cloneProperties['顶点ID'] = id;
@@ -231,7 +230,7 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
                     let arr = Object.entries(
                       dataAnalyzeStore.vertexWritingMappings[label]
                     ).map(([key, value]) => {
-                      return `${value}`;
+                      return value;
                     });
 
                     for (let item of arr) {

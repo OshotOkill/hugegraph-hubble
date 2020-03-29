@@ -34,8 +34,8 @@ export type VertexTypePropertyIndex = {
 export type VertexTypeStyle = {
   icon: string | null;
   color: string | null;
-  size: string | null;  
-  display_fields: string[];  
+  size: string | null;
+  display_fields: string[];
 };
 
 export type VertexTypeValidateFields =
@@ -58,8 +58,8 @@ export interface EditVertexTypeParams {
   style: {
     color: string | null;
     icon: null;
-    size: string | null;  
-    display_fields: string[];  
+    size: string | null;
+    display_fields: string[];
   };
 }
 
@@ -98,16 +98,14 @@ export interface ReCheckedReusableData {
 
 type EdgeTypeProperty = VertexTypeProperty;
 type EdgeTypePropertyIndex = VertexTypePropertyIndex;
-// type EdgeTypeStyle = VertexTypeStyle;
 
 type EdgeTypeStyle = {
   icon: string | null;
   color: string | null;
-  with_arrow : boolean | null;
+  with_arrow: boolean | null;
   thickness: string | null;
   display_fields: string[];
 };
-
 
 export type EdgeTypeValidateFields =
   | 'name'
@@ -119,8 +117,6 @@ export type EdgeTypeValidateFields =
   | 'displayFeilds';
 
 export type EdgeTypeValidatePropertyIndexes = VertexTypeValidatePropertyIndexes;
-
-// export interface EditEdgeTypeParams extends EditVertexTypeParams {}
 
 export interface EditEdgeTypeParams {
   append_properties: VertexTypeProperty[];
@@ -134,7 +130,6 @@ export interface EditEdgeTypeParams {
     display_fields: string[];
   };
 }
-
 
 export interface EdgeType {
   name: string;

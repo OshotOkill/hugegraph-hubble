@@ -33,8 +33,6 @@ import LoadingBackIcon from '../../../../assets/imgs/ic_loading_back.svg';
 import LoadingFrontIcon from '../../../../assets/imgs/ic_loading_front.svg';
 import './VertexTypeList.less';
 import { VertexTypeValidatePropertyIndexes } from '../../../../stores/types/GraphManagementStore/metadataConfigsStore';
-import { style } from 'd3';
-// import { DataAnalyzeStoreContext } from '../../../../stores';
 
 const styles = {
   button: {
@@ -64,7 +62,6 @@ const propertyIndexTypeMappings: Record<string, string> = {
 };
 
 const VertexTypeList: React.FC = observer(() => {
-  // const dataAnalyzeStore = useContext(DataAnalyzeStoreContext);
   const metadataConfigsRootStore = useContext(MetadataConfigsRootStore);
   const { metadataPropertyStore, vertexTypeStore } = metadataConfigsRootStore;
   const [preLoading, switchPreLoading] = useState(true);
@@ -1040,7 +1037,7 @@ const VertexTypeList: React.FC = observer(() => {
                         .concat(
                           vertexTypeStore.editedSelectedVertexType
                             .append_properties
-                        ) //vertexTypeStore.newVertexType.properties
+                        )
                         .filter(({ nullable }) => !nullable)
                         .map(item => {
                           const order = vertexTypeStore.editedSelectedVertexType.style.display_fields.findIndex(

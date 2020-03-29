@@ -81,5 +81,5 @@
       "git add"
     ]
   },
-  "proxy": "http://yq01-m02-kafka01.yq01.baidu.com:8181"
+  "proxy": "http://yq01-sw-hugegraph02.yq01.baidu.com:8182/"
 }
