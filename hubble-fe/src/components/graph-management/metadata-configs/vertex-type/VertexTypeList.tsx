@@ -33,6 +33,7 @@ import LoadingBackIcon from '../../../../assets/imgs/ic_loading_back.svg';
 import LoadingFrontIcon from '../../../../assets/imgs/ic_loading_front.svg';
 import './VertexTypeList.less';
 import { VertexTypeValidatePropertyIndexes } from '../../../../stores/types/GraphManagementStore/metadataConfigsStore';
+import DataAnalyzeStore from '../../../../stores/GraphManagementStore/dataAnalyzeStore'; ///
 
 const styles = {
   button: {
@@ -62,8 +63,13 @@ const propertyIndexTypeMappings: Record<string, string> = {
 };
 
 const VertexTypeList: React.FC = observer(() => {
+  const dataAnalyzeStore = useContext(DataAnalyzeStore); /////
   const metadataConfigsRootStore = useContext(MetadataConfigsRootStore);
-  const { metadataPropertyStore, vertexTypeStore } = metadataConfigsRootStore;
+  const {
+    metadataPropertyStore,
+    vertexTypeStore,
+    graphViewStore
+  } = metadataConfigsRootStore;
   const [preLoading, switchPreLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState('');
   const [selectedRowKeys, mutateSelectedRowKeys] = useState<any[]>([]);
@@ -624,6 +630,23 @@ const VertexTypeList: React.FC = observer(() => {
                     switchIsEditVertex(true);
                     vertexTypeStore.validateEditVertexType();
                   } else {
+                    const id = vertexTypeStore.selectedVertexType!.name;
+                    if (
+                      vertexTypeStore.editedSelectedVertexType.style.color !==
+                      null
+                    ) {
+                      dataAnalyzeStore.vertexColorMappings[id] =
+                        vertexTypeStore.editedSelectedVertexType.style.color;
+                    }
+
+                    if (
+                      vertexTypeStore.editedSelectedVertexType.style.size !==
+                      null
+                    ) {
+                      dataAnalyzeStore.vertexSizeMappings[id] =
+                        vertexTypeStore.editedSelectedVertexType.style.size;
+                    }
+
                     await vertexTypeStore.updateVertexType();
 
                     if (

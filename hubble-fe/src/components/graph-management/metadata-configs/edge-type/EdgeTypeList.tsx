@@ -37,6 +37,7 @@ import NewEdgeType from './NewEdgeType';
 import ReuseEdgeTypes from './ReuseEdgeTypes';
 import { EdgeTypeValidatePropertyIndexes } from '../../../../stores/types/GraphManagementStore/metadataConfigsStore';
 import { EdgeTypeStore } from '../../../../stores/GraphManagementStore/metadataConfigsStore/edgeTypeStore';
+import DataAnalyzeStore from '../../../../stores/GraphManagementStore/dataAnalyzeStore'; ///
 
 const styles = {
   button: {
@@ -58,6 +59,7 @@ const propertyIndexTypeMappings: Record<string, string> = {
 };
 
 const EdgeTypeList: React.FC = observer(() => {
+  const dataAnalyzeStore = useContext(DataAnalyzeStore); /////
   const metadataConfigsRootStore = useContext(MetadataConfigsRootStore);
   const { metadataPropertyStore, edgeTypeStore } = metadataConfigsRootStore;
   const [preLoading, switchPreLoading] = useState(true);
@@ -590,6 +592,30 @@ const EdgeTypeList: React.FC = observer(() => {
                     switchIsEditEdge(true);
                     edgeTypeStore.validateEditEdgeType();
                   } else {
+                    const id = edgeTypeStore.selectedEdgeType!.name;
+                    if (
+                      edgeTypeStore.editedSelectedEdgeType.style.color !== null
+                    ) {
+                      dataAnalyzeStore.edgeColorMappings[id] =
+                        edgeTypeStore.editedSelectedEdgeType.style.color;
+                    }
+
+                    if (
+                      edgeTypeStore.editedSelectedEdgeType.style.with_arrow !==
+                      null
+                    ) {
+                      dataAnalyzeStore.edgeWithArrowMappings[id] =
+                        edgeTypeStore.editedSelectedEdgeType.style.with_arrow;
+                    }
+
+                    if (
+                      edgeTypeStore.editedSelectedEdgeType.style.thickness !==
+                      null
+                    ) {
+                      dataAnalyzeStore.edgeThicknessMappings[id] =
+                        edgeTypeStore.editedSelectedEdgeType.style.thickness;
+                    }
+
                     await edgeTypeStore.updateEdgeType();
 
                     if (

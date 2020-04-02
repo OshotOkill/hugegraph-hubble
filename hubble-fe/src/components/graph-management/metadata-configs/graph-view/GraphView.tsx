@@ -180,6 +180,7 @@ const GraphDataView: React.FC = observer(() => {
   }, [graph, graphViewStore.originalGraphViewData]);
 
   useEffect(() => {
+    console.log('3333333', dataAnalyzeStore);
     graphViewStore.fetchGraphViewData(
       dataAnalyzeStore.vertexColorMappings,
       dataAnalyzeStore.vertexSizeMappings,
@@ -188,6 +189,13 @@ const GraphDataView: React.FC = observer(() => {
       dataAnalyzeStore.edgeThicknessMappings,
       dataAnalyzeStore.edgeWithArrowMappings,
       dataAnalyzeStore.edgeWritingMappings
+      // graphViewStore.vertexColorMappings,
+      // graphViewStore.vertexSizeMappings,
+      // graphViewStore.vertexWritingMappings,
+      // graphViewStore.edgeColorMappings,
+      // graphViewStore.edgeThicknessMappings,
+      // graphViewStore.edgeWithArrowMappings,
+      // graphViewStore.edgeWritingMappings
     );
 
     return () => {
