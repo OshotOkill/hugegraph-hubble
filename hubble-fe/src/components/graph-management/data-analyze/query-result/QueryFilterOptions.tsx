@@ -320,9 +320,9 @@ const QueryFilterOptions: React.FC<{
                   });
                 });
 
-                let cloneEdges = [
-                  ...dataAnalyzeStore.expandedGraphData.data.graph_view.edges
-                ];
+                let cloneEdges = cloneDeep(
+                  dataAnalyzeStore.expandedGraphData.data.graph_view.edges
+                );
                 cloneEdges.forEach(
                   ({ id, label, source, target, properties }) => {
                     let cloneProperties = { ...properties };

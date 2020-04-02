@@ -1,3 +1,5 @@
+import { dict } from '../common';
+
 export interface PageConfig {
   pageNumber: number;
   pageTotal: number;
@@ -182,6 +184,7 @@ export interface GraphViewData {
     label: string;
     properties: Record<string, string>;
     primary_keys: string[];
+    style?: dict<string | number>;
   }[];
   edges: {
     id: string;

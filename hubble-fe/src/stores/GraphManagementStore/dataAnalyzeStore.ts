@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { observable, action, flow, computed, runInAction } from 'mobx';
 import axios, { AxiosResponse } from 'axios';
-import { isUndefined, cloneDeep } from 'lodash-es';
+import { isUndefined, cloneDeep, clone } from 'lodash-es';
 
 import {
   GraphData,
@@ -352,7 +352,7 @@ export class DataAnalyzeStore {
   }
 
   @computed get graphEdges(): GraphEdge[] {
-    let cloneEdges = [...this.originalGraphData.data.graph_view.edges];
+    let cloneEdges = cloneDeep(this.originalGraphData.data.graph_view.edges);
     cloneEdges.push({
       id: 'hiddenEdgeOne',
       label: 'hiddenEdgeLabelOne',
@@ -869,7 +869,7 @@ export class DataAnalyzeStore {
   });
 
   fetchAllNodeStyle = flow(function* fetchAllNodeStyle(this: DataAnalyzeStore) {
-    this.requestStatus.fetchAllEdgeStyle = 'pending';
+    this.requestStatus.fetchAllNodeStyle = 'pending';
     try {
       const result: AxiosResponse<responseData<
         VertexTypeListResponse
