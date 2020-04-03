@@ -33,7 +33,7 @@ import LoadingBackIcon from '../../../../assets/imgs/ic_loading_back.svg';
 import LoadingFrontIcon from '../../../../assets/imgs/ic_loading_front.svg';
 import './VertexTypeList.less';
 import { VertexTypeValidatePropertyIndexes } from '../../../../stores/types/GraphManagementStore/metadataConfigsStore';
-import DataAnalyzeStore from '../../../../stores/GraphManagementStore/dataAnalyzeStore'; ///
+import DataAnalyzeStore from '../../../../stores/GraphManagementStore/dataAnalyzeStore';
 
 const styles = {
   button: {
@@ -63,7 +63,7 @@ const propertyIndexTypeMappings: Record<string, string> = {
 };
 
 const VertexTypeList: React.FC = observer(() => {
-  const dataAnalyzeStore = useContext(DataAnalyzeStore); /////
+  const dataAnalyzeStore = useContext(DataAnalyzeStore);
   const metadataConfigsRootStore = useContext(MetadataConfigsRootStore);
   const {
     metadataPropertyStore,
@@ -675,7 +675,7 @@ const VertexTypeList: React.FC = observer(() => {
 
                     switchIsEditVertex(false);
                     vertexTypeStore.selectVertexType(null);
-                    vertexTypeStore.resetEditedSelectedVertexType();
+                    // vertexTypeStore.resetEditedSelectedVertexType();
                     vertexTypeStore.fetchVertexTypeList();
                   }
                 }}

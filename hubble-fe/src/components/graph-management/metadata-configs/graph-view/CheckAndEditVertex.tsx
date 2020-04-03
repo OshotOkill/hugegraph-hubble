@@ -131,9 +131,9 @@ const CheckAndEditVertex: React.FC = observer(() => {
     switchDeletePop(false);
     vertexTypeStore.selectVertexType(null);
     vertexTypeStore.resetEditedSelectedVertexType();
-
-    // if node > 1, delete node on local before send request
-    if (graphViewStore.visDataSet!.nodes.length > 1) {
+    // if node > 4, delete node on local before send request
+    if (graphViewStore.visDataSet!.nodes.length > 4) {
+      //add three hidden nodes
       graphViewStore.visDataSet!.nodes.remove(vertexName);
     }
 

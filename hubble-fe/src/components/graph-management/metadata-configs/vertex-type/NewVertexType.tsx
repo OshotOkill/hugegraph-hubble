@@ -26,8 +26,11 @@ import BlueArrowIcon from '../../../../assets/imgs/ic_arrow_blue.svg';
 import closeIcon from '../../../../assets/imgs/ic_close_16.svg';
 import './NewVertexType.less';
 import { VertexTypeValidatePropertyIndexes } from '../../../../stores/types/GraphManagementStore/metadataConfigsStore';
+import { EdgeTypeStore } from '../../../../stores/GraphManagementStore/metadataConfigsStore/edgeTypeStore';
+import DataAnalyzeStore from '../../../../stores/GraphManagementStore/dataAnalyzeStore';
 
 const NewVertexType: React.FC = observer(() => {
+  const dataAnalyzeStore = useContext(DataAnalyzeStore);
   const { metadataPropertyStore, vertexTypeStore } = useContext(
     MetadataConfigsRootStore
   );
@@ -857,7 +860,17 @@ const NewVertexType: React.FC = observer(() => {
               if (!vertexTypeStore.isCreatedReady) {
                 return;
               }
+              const id = vertexTypeStore.newVertexType.name;
+              if (vertexTypeStore.newVertexType.style.color !== null) {
+                dataAnalyzeStore.vertexColorMappings[
+                  id
+                ] = vertexTypeStore.newVertexType.style.color!;
+              }
 
+              if (vertexTypeStore.newVertexType.style.size !== null) {
+                dataAnalyzeStore.vertexSizeMappings[id] =
+                  vertexTypeStore.newVertexType.style.size;
+              }
               await vertexTypeStore.addVertexType();
 
               if (vertexTypeStore.requestStatus.addVertexType === 'success') {

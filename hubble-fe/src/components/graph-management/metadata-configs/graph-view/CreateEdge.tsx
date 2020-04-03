@@ -131,10 +131,11 @@ const CreateEdge: React.FC = observer(() => {
                   ? 45
                   : style.thickness === 'NORMAL'
                   ? 20
+                  : name === 'hiddenEdgeOne'
+                  ? 45
                   : -10,
-              font: {
-                color: '#666'
-              },
+              font: { size: 16, strokeWidth: 0, color: '#666' },
+              arrows: style.with_arrow === true ? 'to' : '',
               title: `
                 <div class="metadata-graph-view-tooltip-fields">
                   <div>边类型：</div>

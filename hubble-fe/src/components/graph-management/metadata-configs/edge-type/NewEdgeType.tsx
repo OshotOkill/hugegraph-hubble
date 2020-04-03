@@ -28,8 +28,10 @@ import NoSelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight.sv
 import closeIcon from '../../../../assets/imgs/ic_close_16.svg';
 import MetadataConfigsRootStore from '../../../../stores/GraphManagementStore/metadataConfigsStore/metadataConfigsStore';
 import { EdgeTypeValidatePropertyIndexes } from '../../../../stores/types/GraphManagementStore/metadataConfigsStore';
+import DataAnalyzeStore from '../../../../stores/GraphManagementStore/dataAnalyzeStore';
 
 const NewVertexType: React.FC = observer(() => {
+  const dataAnalyzeStore = useContext(DataAnalyzeStore);
   const { metadataPropertyStore, vertexTypeStore, edgeTypeStore } = useContext(
     MetadataConfigsRootStore
   );
@@ -951,6 +953,23 @@ const NewVertexType: React.FC = observer(() => {
 
               if (!edgeTypeStore.isCreatedReady) {
                 return;
+              }
+
+              const id = edgeTypeStore.newEdgeType.name;
+              if (edgeTypeStore.newEdgeType.style.color !== null) {
+                dataAnalyzeStore.edgeColorMappings[
+                  id
+                ] = edgeTypeStore.newEdgeType.style.color!;
+              }
+
+              if (edgeTypeStore.newEdgeType.style.with_arrow !== null) {
+                dataAnalyzeStore.edgeWithArrowMappings[id] =
+                  edgeTypeStore.newEdgeType.style.with_arrow;
+              }
+
+              if (edgeTypeStore.newEdgeType.style.thickness !== null) {
+                dataAnalyzeStore.edgeThicknessMappings[id] =
+                  edgeTypeStore.newEdgeType.style.thickness;
               }
 
               await edgeTypeStore.addEdgeType();

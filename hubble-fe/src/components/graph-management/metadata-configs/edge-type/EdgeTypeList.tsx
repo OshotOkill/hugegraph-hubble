@@ -59,7 +59,7 @@ const propertyIndexTypeMappings: Record<string, string> = {
 };
 
 const EdgeTypeList: React.FC = observer(() => {
-  const dataAnalyzeStore = useContext(DataAnalyzeStore); /////
+  const dataAnalyzeStore = useContext(DataAnalyzeStore);
   const metadataConfigsRootStore = useContext(MetadataConfigsRootStore);
   const { metadataPropertyStore, edgeTypeStore } = metadataConfigsRootStore;
   const [preLoading, switchPreLoading] = useState(true);

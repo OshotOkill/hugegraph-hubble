@@ -118,7 +118,7 @@ const CreateVertex: React.FC = observer(() => {
               vLabel: name,
               properties,
               value:
-                style.size === 'HUGE'
+                style.size === 'HUGE' || name === 'hiddenNodeOne'
                   ? 40
                   : style.size === 'BIG'
                   ? 30
