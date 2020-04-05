@@ -191,11 +191,20 @@ const CheckAndEditVertex: React.FC = observer(() => {
           type="primary"
           size="medium"
           style={{ width: 60 }}
-          disabled={isEditVertex && !vertexTypeStore.isEditReady}
+          // disabled={isEditVertex && !vertexTypeStore.isEditReady}
+          disabled={
+            isEditVertex &&
+            (vertexTypeStore.editedSelectedVertexType.style.display_fields
+              .length === 0 ||
+              !vertexTypeStore.isEditReady)
+          }
           onClick={async () => {
             if (!isEditVertex) {
               graphViewStore.setCurrentDrawer('edit-vertex');
               vertexTypeStore.validateEditVertexType();
+              vertexTypeStore.editedSelectedVertexType.style.display_fields = cloneDeep(
+                vertexTypeStore.selectedVertexType!.style.display_fields
+              );
             } else {
               const id = vertexTypeStore.selectedVertexType!.name;
               const updateInfo: Record<string, any> = {};
@@ -305,7 +314,6 @@ const CheckAndEditVertex: React.FC = observer(() => {
               graphViewStore.visNetwork!.unselectAll();
               graphViewStore.setCurrentDrawer('');
               vertexTypeStore.selectVertexType(null);
-              vertexTypeStore.resetEditedSelectedVertexType();
               vertexTypeStore.fetchVertexTypeList();
             }
           }}
@@ -512,6 +520,7 @@ const CheckAndEditVertex: React.FC = observer(() => {
               size="medium"
               showSearch={false}
               disabled={!isEditVertex}
+              style={{ paddingLeft: 7 }}
               value={
                 vertexTypeStore.editedSelectedVertexType.style.size !== null
                   ? vertexTypeStore.editedSelectedVertexType.style.size
@@ -548,7 +557,8 @@ const CheckAndEditVertex: React.FC = observer(() => {
                   <div
                     className="new-vertex-type-options-color"
                     style={{
-                      marginTop: 5
+                      marginTop: 5,
+                      marginLeft: 5
                     }}
                   >
                     {value.ch}
@@ -711,6 +721,7 @@ const CheckAndEditVertex: React.FC = observer(() => {
               size="medium"
               showSearch={false}
               disabled={!isEditVertex}
+              placeholder="请选择顶点展示内容"
               onChange={(value: string[]) => {
                 vertexTypeStore.mutateEditedSelectedVertexType({
                   ...vertexTypeStore.editedSelectedVertexType,
@@ -732,24 +743,6 @@ const CheckAndEditVertex: React.FC = observer(() => {
               }}
               value={
                 vertexTypeStore.editedSelectedVertexType.style.display_fields
-                  .length !== 0
-                  ? vertexTypeStore.editedSelectedVertexType.style
-                      .display_fields
-                  : (() => {
-                      vertexTypeStore.selectedVertexType!.style.display_fields.forEach(
-                        (item, index) => {
-                          if (item === '~id') {
-                            vertexTypeStore.selectedVertexType!.style.display_fields[
-                              index
-                            ] = '顶点ID';
-                            return vertexTypeStore.selectedVertexType!.style
-                              .display_fields;
-                          }
-                        }
-                      );
-                      return vertexTypeStore.selectedVertexType!.style
-                        .display_fields;
-                    })()
               }
             >
               {vertexTypeStore.selectedVertexType?.properties
@@ -772,8 +765,15 @@ const CheckAndEditVertex: React.FC = observer(() => {
                   return (
                     <Select.Option value={item.name} key={item.name}>
                       <div className={multiSelectOptionClassName}>
-                        <div>{order !== -1 ? order + 1 : ''}</div>
-                        <div>{item.name}</div>
+                        <div
+                          style={{
+                            backgroundColor: '#2b65ff',
+                            border: '0'
+                          }}
+                        >
+                          {order !== -1 ? order + 1 : ''}
+                        </div>
+                        <div style={{ color: '#333' }}>{item.name}</div>
                       </div>
                     </Select.Option>
                   );

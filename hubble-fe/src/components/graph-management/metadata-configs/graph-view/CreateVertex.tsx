@@ -350,6 +350,7 @@ const CreateVertex: React.FC = observer(() => {
                   width={67}
                   size="medium"
                   value={vertexTypeStore.newVertexType.style.size}
+                  style={{ paddingLeft: 7 }}
                   onChange={(value: string) => {
                     vertexTypeStore.mutateNewProperty({
                       ...vertexTypeStore.newVertexType,
@@ -369,7 +370,8 @@ const CreateVertex: React.FC = observer(() => {
                       <div
                         className="new-vertex-type-options-color"
                         style={{
-                          marginTop: 6
+                          marginTop: 6,
+                          marginLeft: 5
                         }}
                       >
                         {value.ch}
@@ -668,8 +670,15 @@ const CreateVertex: React.FC = observer(() => {
                     return (
                       <Select.Option value={item.name} key={item.name}>
                         <div className={multiSelectOptionClassName}>
-                          <div>{order !== -1 ? order + 1 : ''}</div>
-                          <div>{item.name}</div>
+                          <div
+                            style={{
+                              backgroundColor: '#2b65ff',
+                              border: '0'
+                            }}
+                          >
+                            {order !== -1 ? order + 1 : ''}
+                          </div>
+                          <div style={{ color: '#333' }}>{item.name}</div>
                         </div>
                       </Select.Option>
                     );

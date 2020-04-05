@@ -277,7 +277,7 @@ const EdgeTypeList: React.FC = observer(() => {
               onClick={() => {
                 edgeTypeStore.selectEdgeType(index);
                 edgeTypeStore.validateEditEdgeType(true);
-                switchIsEditEdge(true);
+                switchIsEditEdge(false);
               }}
             >
               编辑
@@ -586,11 +586,19 @@ const EdgeTypeList: React.FC = observer(() => {
                 type="primary"
                 size="medium"
                 style={{ width: 60 }}
-                disabled={isEditEdge && !edgeTypeStore.isEditReady}
+                disabled={
+                  isEditEdge &&
+                  (edgeTypeStore.editedSelectedEdgeType.style.display_fields
+                    .length === 0 ||
+                    !edgeTypeStore.isEditReady)
+                }
                 onClick={async () => {
                   if (!isEditEdge) {
                     switchIsEditEdge(true);
                     edgeTypeStore.validateEditEdgeType();
+                    edgeTypeStore.editedSelectedEdgeType.style.display_fields = cloneDeep(
+                      edgeTypeStore.selectedEdgeType!.style.display_fields
+                    );
                   } else {
                     const id = edgeTypeStore.selectedEdgeType!.name;
                     if (
@@ -642,7 +650,6 @@ const EdgeTypeList: React.FC = observer(() => {
 
                     switchIsEditEdge(false);
                     edgeTypeStore.selectEdgeType(null);
-                    edgeTypeStore.resetEditedSelectedEdgeType();
                     edgeTypeStore.fetchEdgeTypeList();
                   }
                 }}
@@ -826,7 +833,7 @@ const EdgeTypeList: React.FC = observer(() => {
                           >
                             <div
                               className="new-vertex-type-options-color"
-                              style={{ marginTop: 5 }}
+                              style={{ marginTop: 5, marginLeft: 5 }}
                             >
                               <img
                                 src={
@@ -855,6 +862,7 @@ const EdgeTypeList: React.FC = observer(() => {
                         size="medium"
                         showSearch={false}
                         disabled={!isEditEdge}
+                        style={{ paddingLeft: 7 }}
                         value={
                           edgeTypeStore.editedSelectedEdgeType.style
                             .thickness !== null
@@ -900,7 +908,8 @@ const EdgeTypeList: React.FC = observer(() => {
                             <div
                               className="new-vertex-type-options-color"
                               style={{
-                                marginTop: 5
+                                marginTop: 5,
+                                marginLeft: 5
                               }}
                             >
                               {value.ch}
@@ -1093,6 +1102,7 @@ const EdgeTypeList: React.FC = observer(() => {
                         mode="multiple"
                         size="medium"
                         showSearch={false}
+                        placeholder="请选择边展示内容"
                         disabled={!isEditEdge}
                         onChange={(value: string[]) => {
                           edgeTypeStore.mutateEditedSelectedEdgeType({
@@ -1124,24 +1134,7 @@ const EdgeTypeList: React.FC = observer(() => {
                         }}
                         value={
                           edgeTypeStore.editedSelectedEdgeType.style
-                            .display_fields.length !== 0
-                            ? edgeTypeStore.editedSelectedEdgeType.style
-                                .display_fields
-                            : (() => {
-                                edgeTypeStore.selectedEdgeType!.style.display_fields.forEach(
-                                  (item, index) => {
-                                    if (item === '~id') {
-                                      edgeTypeStore.selectedEdgeType!.style.display_fields[
-                                        index
-                                      ] = '边类型';
-                                      return edgeTypeStore.selectedEdgeType!
-                                        .style.display_fields;
-                                    }
-                                  }
-                                );
-                                return edgeTypeStore.selectedEdgeType!.style
-                                  .display_fields;
-                              })()
+                            .display_fields
                         }
                       >
                         {edgeTypeStore.selectedEdgeType?.properties
@@ -1165,8 +1158,17 @@ const EdgeTypeList: React.FC = observer(() => {
                             return (
                               <Select.Option value={item.name} key={item.name}>
                                 <div className={multiSelectOptionClassName}>
-                                  <div>{order !== -1 ? order + 1 : ''}</div>
-                                  <div>{item.name}</div>
+                                  <div
+                                    style={{
+                                      backgroundColor: '#2b65ff',
+                                      border: '0'
+                                    }}
+                                  >
+                                    {order !== -1 ? order + 1 : ''}
+                                  </div>
+                                  <div style={{ color: '#333' }}>
+                                    {item.name}
+                                  </div>
                                 </div>
                               </Select.Option>
                             );

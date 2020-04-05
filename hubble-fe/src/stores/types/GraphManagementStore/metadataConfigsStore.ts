@@ -1,4 +1,5 @@
 import { dict } from '../common';
+import { VertexTypeStore } from '../../GraphManagementStore/metadataConfigsStore/vertexTypeStore';
 
 export interface PageConfig {
   pageNumber: number;

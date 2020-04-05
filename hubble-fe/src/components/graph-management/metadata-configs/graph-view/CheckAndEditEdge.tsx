@@ -183,11 +183,20 @@ const CheckAndEditEdge: React.FC = observer(() => {
           type="primary"
           size="medium"
           style={{ width: 60 }}
-          disabled={isEditEdge && !edgeTypeStore.isEditReady}
+          // disabled={isEditEdge && !edgeTypeStore.isEditReady}
+          disabled={
+            isEditEdge &&
+            (edgeTypeStore.editedSelectedEdgeType.style.display_fields
+              .length === 0 ||
+              !edgeTypeStore.isEditReady)
+          }
           onClick={async () => {
             if (!isEditEdge) {
               graphViewStore.setCurrentDrawer('edit-edge');
               edgeTypeStore.validateEditEdgeType();
+              edgeTypeStore.editedSelectedEdgeType.style.display_fields = cloneDeep(
+                edgeTypeStore.selectedEdgeType!.style.display_fields
+              );
             } else {
               const id = generateGraphModeId(
                 edgeTypeStore.selectedEdgeType!.name,
@@ -300,7 +309,6 @@ const CheckAndEditEdge: React.FC = observer(() => {
               graphViewStore.visNetwork!.unselectAll();
               graphViewStore.setCurrentDrawer('');
               edgeTypeStore.selectEdgeType(null);
-              edgeTypeStore.resetEditedSelectedEdgeType();
               edgeTypeStore.fetchEdgeTypeList();
             }
           }}
@@ -553,7 +561,7 @@ const CheckAndEditEdge: React.FC = observer(() => {
                   >
                     <div
                       className="new-vertex-type-options-color"
-                      style={{ marginTop: 5 }}
+                      style={{ marginTop: 5, marginLeft: 5 }}
                     >
                       <img
                         src={
@@ -581,6 +589,7 @@ const CheckAndEditEdge: React.FC = observer(() => {
                 size="medium"
                 showSearch={false}
                 disabled={!isEditEdge}
+                style={{ paddingLeft: 7 }}
                 value={
                   edgeTypeStore.editedSelectedEdgeType.style.thickness !== null
                     ? edgeTypeStore.editedSelectedEdgeType.style.thickness
@@ -622,7 +631,8 @@ const CheckAndEditEdge: React.FC = observer(() => {
                     <div
                       className="new-vertex-type-options-color"
                       style={{
-                        marginTop: 5
+                        marginTop: 5,
+                        marginLeft: 5
                       }}
                     >
                       {value.ch}
@@ -808,6 +818,7 @@ const CheckAndEditEdge: React.FC = observer(() => {
                 size="medium"
                 showSearch={false}
                 disabled={!isEditEdge}
+                placeholder="请选择边展示内容"
                 onChange={(value: string[]) => {
                   edgeTypeStore.mutateEditedSelectedEdgeType({
                     ...edgeTypeStore.editedSelectedEdgeType,
@@ -835,23 +846,6 @@ const CheckAndEditEdge: React.FC = observer(() => {
                 }}
                 value={
                   edgeTypeStore.editedSelectedEdgeType.style.display_fields
-                    .length !== 0
-                    ? edgeTypeStore.editedSelectedEdgeType.style.display_fields
-                    : (() => {
-                        edgeTypeStore.selectedEdgeType!.style.display_fields.forEach(
-                          (item, index) => {
-                            if (item === '~id') {
-                              edgeTypeStore.selectedEdgeType!.style.display_fields[
-                                index
-                              ] = '边类型';
-                              return edgeTypeStore.selectedEdgeType!.style
-                                .display_fields;
-                            }
-                          }
-                        );
-                        return edgeTypeStore.selectedEdgeType!.style
-                          .display_fields;
-                      })()
                 }
               >
                 {edgeTypeStore.selectedEdgeType?.properties
@@ -874,8 +868,15 @@ const CheckAndEditEdge: React.FC = observer(() => {
                     return (
                       <Select.Option value={item.name} key={item.name}>
                         <div className={multiSelectOptionClassName}>
-                          <div>{order !== -1 ? order + 1 : ''}</div>
-                          <div>{item.name}</div>
+                          <div
+                            style={{
+                              backgroundColor: '#2b65ff',
+                              border: '0'
+                            }}
+                          >
+                            {order !== -1 ? order + 1 : ''}
+                          </div>
+                          <div style={{ color: '#333' }}>{item.name}</div>
                         </div>
                       </Select.Option>
                     );

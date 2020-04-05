@@ -1,4 +1,5 @@
 import { observable, action, flow, computed } from 'mobx';
+import { useContext } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import { cloneDeep, isUndefined, remove } from 'lodash-es';
 
@@ -482,7 +483,6 @@ export class VertexTypeStore {
           type: '',
           properties: ''
         };
-
         if (!/^[\w\u4e00-\u9fa5]{1,128}$/.test(name)) {
           if (!initial) {
             if (name.length !== 0) {

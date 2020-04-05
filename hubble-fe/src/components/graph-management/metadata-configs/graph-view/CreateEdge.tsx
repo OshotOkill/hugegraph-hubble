@@ -345,7 +345,8 @@ const CreateEdge: React.FC = observer(() => {
                       <div
                         className="new-vertex-type-options-color"
                         style={{
-                          marginTop: 6
+                          marginTop: 6,
+                          marginLeft: 5
                         }}
                       >
                         <img
@@ -368,6 +369,7 @@ const CreateEdge: React.FC = observer(() => {
                   width={66}
                   size="medium"
                   value={edgeTypeStore.newEdgeType.style.thickness}
+                  style={{ paddingLeft: 7 }}
                   onChange={(value: string) => {
                     edgeTypeStore.mutateNewEdgeType({
                       ...edgeTypeStore.newEdgeType,
@@ -387,7 +389,8 @@ const CreateEdge: React.FC = observer(() => {
                       <div
                         className="new-vertex-type-options-color"
                         style={{
-                          marginTop: 6
+                          marginTop: 6,
+                          marginLeft: 5
                         }}
                       >
                         {value.ch}
@@ -743,8 +746,15 @@ const CreateEdge: React.FC = observer(() => {
                     return (
                       <Select.Option value={item.name} key={item.name}>
                         <div className={multiSelectOptionClassName}>
-                          <div>{order !== -1 ? order + 1 : ''}</div>
-                          <div>{item.name}</div>
+                          <div
+                            style={{
+                              backgroundColor: '#2b65ff',
+                              border: '0'
+                            }}
+                          >
+                            {order !== -1 ? order + 1 : ''}
+                          </div>
+                          <div style={{ color: '#333' }}>{item.name}</div>
                         </div>
                       </Select.Option>
                     );
