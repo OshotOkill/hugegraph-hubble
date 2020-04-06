@@ -191,7 +191,6 @@ const CheckAndEditVertex: React.FC = observer(() => {
           type="primary"
           size="medium"
           style={{ width: 60 }}
-          // disabled={isEditVertex && !vertexTypeStore.isEditReady}
           disabled={
             isEditVertex &&
             (vertexTypeStore.editedSelectedVertexType.style.display_fields
@@ -204,6 +203,12 @@ const CheckAndEditVertex: React.FC = observer(() => {
               vertexTypeStore.validateEditVertexType();
               vertexTypeStore.editedSelectedVertexType.style.display_fields = cloneDeep(
                 vertexTypeStore.selectedVertexType!.style.display_fields
+              );
+              vertexTypeStore.editedSelectedVertexType.style.size = cloneDeep(
+                vertexTypeStore.selectedVertexType!.style.size
+              );
+              vertexTypeStore.editedSelectedVertexType.style.color = cloneDeep(
+                vertexTypeStore.selectedVertexType!.style.color
               );
             } else {
               const id = vertexTypeStore.selectedVertexType!.name;
@@ -288,7 +293,15 @@ const CheckAndEditVertex: React.FC = observer(() => {
 
                 graphViewStore.visDataSet!.nodes.update(updateInfo);
               }
-
+              vertexTypeStore.selectedVertexType!.style.display_fields = cloneDeep(
+                vertexTypeStore.editedSelectedVertexType.style.display_fields
+              );
+              vertexTypeStore.selectedVertexType!.style.color = cloneDeep(
+                vertexTypeStore.editedSelectedVertexType.style.color
+              );
+              vertexTypeStore.selectedVertexType!.style.size = cloneDeep(
+                vertexTypeStore.editedSelectedVertexType.style.size
+              );
               await vertexTypeStore.updateVertexType();
 
               if (vertexTypeStore.requestStatus.updateVertexType === 'failed') {
@@ -447,7 +460,7 @@ const CheckAndEditVertex: React.FC = observer(() => {
               disabled={!isEditVertex}
               value={
                 <div
-                  className="new-vertex-type-options-color"
+                  className="new-vertex-type-select"
                   style={{
                     background:
                       vertexTypeStore.editedSelectedVertexType.style.color !==
@@ -487,8 +500,9 @@ const CheckAndEditVertex: React.FC = observer(() => {
                     key={color}
                     style={{
                       display: 'inline-block',
-                      marginLeft: index % 5 === 0 ? 0 : -7,
-                      marginTop: index < 5 ? 9 : 2
+                      marginLeft: index % 5 === 0 ? 8 : 0,
+                      marginTop: index < 5 ? 6 : 2,
+                      width: 31
                     }}
                   >
                     <div
@@ -498,17 +512,15 @@ const CheckAndEditVertex: React.FC = observer(() => {
                           ? vertexTypeStore.editedSelectedVertexType.style.color.toLowerCase()
                           : vertexTypeStore.selectedVertexType!.style.color!.toLowerCase()) ===
                         color
-                          ? 'new-vertex-type-options-border'
-                          : 'new-vertex-type-options-no-border'
+                          ? 'new-vertex-type-options-border new-vertex-type-options-color'
+                          : 'new-vertex-type-options-no-border new-vertex-type-options-color'
                       }
-                    >
-                      <div
-                        className="new-vertex-type-options-color"
-                        style={{
-                          background: color
-                        }}
-                      ></div>
-                    </div>
+                      style={{
+                        background: color,
+                        marginLeft: -4,
+                        marginTop: 4.4
+                      }}
+                    ></div>
                   </Select.Option>
                 )
               )}
@@ -741,9 +753,16 @@ const CheckAndEditVertex: React.FC = observer(() => {
                   }
                 });
               }}
-              value={
-                vertexTypeStore.editedSelectedVertexType.style.display_fields
-              }
+              value={(() => {
+                let cloneDisplayFeilds =
+                  vertexTypeStore.editedSelectedVertexType.style.display_fields;
+                cloneDisplayFeilds.map((item, index) => {
+                  if (item === '~id') {
+                    cloneDisplayFeilds[index] = '顶点ID';
+                  }
+                });
+                return cloneDisplayFeilds;
+              })()}
             >
               {vertexTypeStore.selectedVertexType?.properties
                 .concat({ name: '顶点ID', nullable: false })
@@ -767,8 +786,16 @@ const CheckAndEditVertex: React.FC = observer(() => {
                       <div className={multiSelectOptionClassName}>
                         <div
                           style={{
-                            backgroundColor: '#2b65ff',
-                            border: '0'
+                            backgroundColor: vertexTypeStore.editedSelectedVertexType.style.display_fields.includes(
+                              item.name
+                            )
+                              ? '#2b65ff'
+                              : '#fff',
+                            borderColor: vertexTypeStore.editedSelectedVertexType.style.display_fields.includes(
+                              item.name
+                            )
+                              ? '#fff'
+                              : '#e0e0e0'
                           }}
                         >
                           {order !== -1 ? order + 1 : ''}

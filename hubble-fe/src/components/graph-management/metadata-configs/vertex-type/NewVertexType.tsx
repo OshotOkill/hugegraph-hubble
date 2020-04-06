@@ -120,7 +120,7 @@ const NewVertexType: React.FC = observer(() => {
               size="medium"
               value={
                 <div
-                  className="new-vertex-type-options-color"
+                  className="new-vertex-type-select"
                   style={{
                     background: vertexTypeStore.newVertexType.style.color!.toLowerCase(),
                     marginTop: 5
@@ -147,24 +147,23 @@ const NewVertexType: React.FC = observer(() => {
                     key={color}
                     style={{
                       display: 'inline-block',
-                      marginLeft: index % 5 === 0 ? 0 : -7,
-                      marginTop: index < 5 ? 9 : 2
+                      marginLeft: index % 5 === 0 ? 8 : 0,
+                      marginTop: index < 5 ? 6 : 2,
+                      width: 31
                     }}
                   >
                     <div
                       className={
                         vertexTypeStore.newVertexType.style.color === color
-                          ? 'new-vertex-type-options-border'
-                          : 'new-vertex-type-options-no-border'
+                          ? 'new-vertex-type-options-border new-vertex-type-options-color'
+                          : 'new-vertex-type-options-no-border new-vertex-type-options-color'
                       }
-                    >
-                      <div
-                        className="new-vertex-type-options-color"
-                        style={{
-                          background: color
-                        }}
-                      ></div>
-                    </div>
+                      style={{
+                        background: color,
+                        marginLeft: -4,
+                        marginTop: 4.4
+                      }}
+                    ></div>
                   </Select.Option>
                 )
               )}
@@ -465,8 +464,16 @@ const NewVertexType: React.FC = observer(() => {
                     <div className={multiSelectOptionClassName}>
                       <div
                         style={{
-                          backgroundColor: '#2b65ff',
-                          border: '0'
+                          backgroundColor: vertexTypeStore.newVertexType.style.display_fields.includes(
+                            item.name
+                          )
+                            ? '#2b65ff'
+                            : '#fff',
+                          borderColor: vertexTypeStore.newVertexType.style.display_fields.includes(
+                            item.name
+                          )
+                            ? '#fff'
+                            : '#e0e0e0'
                         }}
                       >
                         {order !== -1 ? order + 1 : ''}

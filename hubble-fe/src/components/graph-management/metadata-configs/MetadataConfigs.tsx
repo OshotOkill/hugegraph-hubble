@@ -19,6 +19,7 @@ import ActiveShowGraphIcon from '../../../assets/imgs/ic_tumoshi_white.svg';
 import ShowGraphIcon from '../../../assets/imgs/ic_tumoshi_black.svg';
 
 const MetadataConfig: React.FC = observer(() => {
+  const { vertexTypeStore } = useContext(MetadataConfigsRootStore);
   const appStore = useContext(AppStoreContext);
   const dataAnalyzeStore = useContext(DataAnalyzeStore);
   const graphManagementStore = useContext(GraphManagementStoreContext);

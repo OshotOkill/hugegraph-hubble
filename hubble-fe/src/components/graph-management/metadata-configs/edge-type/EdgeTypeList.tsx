@@ -277,7 +277,10 @@ const EdgeTypeList: React.FC = observer(() => {
               onClick={() => {
                 edgeTypeStore.selectEdgeType(index);
                 edgeTypeStore.validateEditEdgeType(true);
-                switchIsEditEdge(false);
+                switchIsEditEdge(true);
+                edgeTypeStore.editedSelectedEdgeType.style.display_fields = cloneDeep(
+                  edgeTypeStore.selectedEdgeType!.style.display_fields
+                );
               }}
             >
               编辑
@@ -599,6 +602,15 @@ const EdgeTypeList: React.FC = observer(() => {
                     edgeTypeStore.editedSelectedEdgeType.style.display_fields = cloneDeep(
                       edgeTypeStore.selectedEdgeType!.style.display_fields
                     );
+                    edgeTypeStore.editedSelectedEdgeType.style.color = cloneDeep(
+                      edgeTypeStore.selectedEdgeType!.style.color
+                    );
+                    edgeTypeStore.editedSelectedEdgeType.style.with_arrow = cloneDeep(
+                      edgeTypeStore.selectedEdgeType!.style.with_arrow
+                    );
+                    edgeTypeStore.editedSelectedEdgeType.style.thickness = cloneDeep(
+                      edgeTypeStore.selectedEdgeType!.style.thickness
+                    );
                   } else {
                     const id = edgeTypeStore.selectedEdgeType!.name;
                     if (
@@ -623,7 +635,18 @@ const EdgeTypeList: React.FC = observer(() => {
                       dataAnalyzeStore.edgeThicknessMappings[id] =
                         edgeTypeStore.editedSelectedEdgeType.style.thickness;
                     }
-
+                    edgeTypeStore.selectedEdgeType!.style.display_fields = cloneDeep(
+                      edgeTypeStore.editedSelectedEdgeType.style.display_fields
+                    );
+                    edgeTypeStore.selectedEdgeType!.style.color = cloneDeep(
+                      edgeTypeStore.editedSelectedEdgeType.style.color
+                    );
+                    edgeTypeStore.selectedEdgeType!.style.thickness = cloneDeep(
+                      edgeTypeStore.editedSelectedEdgeType.style.thickness
+                    );
+                    edgeTypeStore.selectedEdgeType!.style.with_arrow = cloneDeep(
+                      edgeTypeStore.editedSelectedEdgeType.style.with_arrow
+                    );
                     await edgeTypeStore.updateEdgeType();
 
                     if (
@@ -697,7 +720,7 @@ const EdgeTypeList: React.FC = observer(() => {
                         dropdownMatchSelectWidth={false}
                         value={
                           <div
-                            className="new-vertex-type-options-color"
+                            className="new-vertex-type-select"
                             style={{
                               background:
                                 edgeTypeStore.editedSelectedEdgeType.style
@@ -746,8 +769,9 @@ const EdgeTypeList: React.FC = observer(() => {
                               key={color}
                               style={{
                                 display: 'inline-block',
-                                marginLeft: index % 5 === 0 ? 0 : -7,
-                                marginTop: index < 5 ? 9 : 2
+                                marginLeft: index % 5 === 0 ? 8 : 0,
+                                marginTop: index < 5 ? 6 : 2,
+                                width: 31
                               }}
                             >
                               <div
@@ -757,17 +781,15 @@ const EdgeTypeList: React.FC = observer(() => {
                                     ? edgeTypeStore.editedSelectedEdgeType.style.color.toLowerCase()
                                     : edgeTypeStore.selectedEdgeType!.style.color!.toLowerCase()) ===
                                   color
-                                    ? 'new-vertex-type-options-border'
-                                    : 'new-vertex-type-options-no-border'
+                                    ? 'new-vertex-type-options-border new-vertex-type-options-color'
+                                    : 'new-vertex-type-options-no-border new-vertex-type-options-color'
                                 }
-                              >
-                                <div
-                                  className="new-vertex-type-options-color"
-                                  style={{
-                                    background: color
-                                  }}
-                                ></div>
-                              </div>
+                                style={{
+                                  background: color,
+                                  marginLeft: -4,
+                                  marginTop: 4.4
+                                }}
+                              ></div>
                             </Select.Option>
                           )
                         )}
@@ -1132,10 +1154,17 @@ const EdgeTypeList: React.FC = observer(() => {
                             }
                           });
                         }}
-                        value={
-                          edgeTypeStore.editedSelectedEdgeType.style
-                            .display_fields
-                        }
+                        value={(() => {
+                          let cloneDisplayFeilds =
+                            edgeTypeStore.editedSelectedEdgeType.style
+                              .display_fields;
+                          cloneDisplayFeilds.map((item, index) => {
+                            if (item === '~id') {
+                              cloneDisplayFeilds[index] = '边类型';
+                            }
+                          });
+                          return cloneDisplayFeilds;
+                        })()}
                       >
                         {edgeTypeStore.selectedEdgeType?.properties
                           .concat({ name: '边类型', nullable: false })
@@ -1160,8 +1189,16 @@ const EdgeTypeList: React.FC = observer(() => {
                                 <div className={multiSelectOptionClassName}>
                                   <div
                                     style={{
-                                      backgroundColor: '#2b65ff',
-                                      border: '0'
+                                      backgroundColor: edgeTypeStore.editedSelectedEdgeType.style.display_fields.includes(
+                                        item.name
+                                      )
+                                        ? '#2b65ff'
+                                        : '#fff',
+                                      borderColor: edgeTypeStore.editedSelectedEdgeType.style.display_fields.includes(
+                                        item.name
+                                      )
+                                        ? '#fff'
+                                        : '#e0e0e0'
                                     }}
                                   >
                                     {order !== -1 ? order + 1 : ''}

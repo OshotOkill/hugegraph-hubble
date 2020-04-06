@@ -106,7 +106,7 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
           timestep: 0.3,
           stabilization: { iterations: 150 },
           forceAtlas2Based: {
-            gravitationalConstant: Math.log(dataAnalyzeStore.nodeCount) * -60
+            gravitationalConstant: Math.log(dataAnalyzeStore.nodeCount) * -35 //-60
           }
         }
       };

@@ -183,7 +183,6 @@ const CheckAndEditEdge: React.FC = observer(() => {
           type="primary"
           size="medium"
           style={{ width: 60 }}
-          // disabled={isEditEdge && !edgeTypeStore.isEditReady}
           disabled={
             isEditEdge &&
             (edgeTypeStore.editedSelectedEdgeType.style.display_fields
@@ -196,6 +195,15 @@ const CheckAndEditEdge: React.FC = observer(() => {
               edgeTypeStore.validateEditEdgeType();
               edgeTypeStore.editedSelectedEdgeType.style.display_fields = cloneDeep(
                 edgeTypeStore.selectedEdgeType!.style.display_fields
+              );
+              edgeTypeStore.editedSelectedEdgeType.style.color = cloneDeep(
+                edgeTypeStore.selectedEdgeType!.style.color
+              );
+              edgeTypeStore.editedSelectedEdgeType.style.thickness = cloneDeep(
+                edgeTypeStore.selectedEdgeType!.style.thickness
+              );
+              edgeTypeStore.editedSelectedEdgeType.style.with_arrow = cloneDeep(
+                edgeTypeStore.selectedEdgeType!.style.with_arrow
               );
             } else {
               const id = generateGraphModeId(
@@ -285,7 +293,18 @@ const CheckAndEditEdge: React.FC = observer(() => {
 
                 graphViewStore.visDataSet!.edges.update(updateInfo);
               }
-
+              edgeTypeStore.selectedEdgeType!.style.display_fields = cloneDeep(
+                edgeTypeStore.editedSelectedEdgeType.style.display_fields
+              );
+              edgeTypeStore.selectedEdgeType!.style.color = cloneDeep(
+                edgeTypeStore.editedSelectedEdgeType.style.color
+              );
+              edgeTypeStore.selectedEdgeType!.style.thickness = cloneDeep(
+                edgeTypeStore.editedSelectedEdgeType.style.thickness
+              );
+              edgeTypeStore.selectedEdgeType!.style.with_arrow = cloneDeep(
+                edgeTypeStore.editedSelectedEdgeType.style.with_arrow
+              );
               await edgeTypeStore.updateEdgeType();
 
               if (edgeTypeStore.requestStatus.updateEdgeType === 'failed') {
@@ -310,6 +329,7 @@ const CheckAndEditEdge: React.FC = observer(() => {
               graphViewStore.setCurrentDrawer('');
               edgeTypeStore.selectEdgeType(null);
               edgeTypeStore.fetchEdgeTypeList();
+              // edgeTypeStore.resetEditedSelectedEdgeType();
             }
           }}
           key="drawer-manipulation"
@@ -432,7 +452,7 @@ const CheckAndEditEdge: React.FC = observer(() => {
                 disabled={!isEditEdge}
                 value={
                   <div
-                    className="new-vertex-type-options-color"
+                    className="new-vertex-type-select"
                     style={{
                       background:
                         edgeTypeStore.editedSelectedEdgeType.style.color !==
@@ -478,8 +498,9 @@ const CheckAndEditEdge: React.FC = observer(() => {
                       key={color}
                       style={{
                         display: 'inline-block',
-                        marginLeft: index % 5 === 0 ? 0 : -7,
-                        marginTop: index < 5 ? 9 : 2
+                        marginLeft: index % 5 === 0 ? 8 : 0,
+                        marginTop: index < 5 ? 6 : 2,
+                        width: 31
                       }}
                     >
                       <div
@@ -489,17 +510,15 @@ const CheckAndEditEdge: React.FC = observer(() => {
                             ? edgeTypeStore.editedSelectedEdgeType.style.color.toLowerCase()
                             : edgeTypeStore.selectedEdgeType!.style.color!.toLowerCase()) ===
                           color
-                            ? 'new-vertex-type-options-border'
-                            : 'new-vertex-type-options-no-border'
+                            ? 'new-vertex-type-options-border new-vertex-type-options-color'
+                            : 'new-vertex-type-options-no-border new-vertex-type-options-color'
                         }
-                      >
-                        <div
-                          className="new-vertex-type-options-color"
-                          style={{
-                            background: color
-                          }}
-                        ></div>
-                      </div>
+                        style={{
+                          background: color,
+                          marginLeft: -4,
+                          marginTop: 4.4
+                        }}
+                      ></div>
                     </Select.Option>
                   )
                 )}
@@ -844,9 +863,16 @@ const CheckAndEditEdge: React.FC = observer(() => {
                     }
                   });
                 }}
-                value={
-                  edgeTypeStore.editedSelectedEdgeType.style.display_fields
-                }
+                value={(() => {
+                  let cloneDisplayFeilds =
+                    edgeTypeStore.editedSelectedEdgeType.style.display_fields;
+                  cloneDisplayFeilds.map((item, index) => {
+                    if (item === '~id') {
+                      cloneDisplayFeilds[index] = '边类型';
+                    }
+                  });
+                  return cloneDisplayFeilds;
+                })()}
               >
                 {edgeTypeStore.selectedEdgeType?.properties
                   .concat({ name: '边类型', nullable: false })
@@ -870,8 +896,16 @@ const CheckAndEditEdge: React.FC = observer(() => {
                         <div className={multiSelectOptionClassName}>
                           <div
                             style={{
-                              backgroundColor: '#2b65ff',
-                              border: '0'
+                              backgroundColor: edgeTypeStore.editedSelectedEdgeType.style.display_fields.includes(
+                                item.name
+                              )
+                                ? '#2b65ff'
+                                : '#fff',
+                              borderColor: edgeTypeStore.editedSelectedEdgeType.style.display_fields.includes(
+                                item.name
+                              )
+                                ? '#fff'
+                                : '#e0e0e0'
                             }}
                           >
                             {order !== -1 ? order + 1 : ''}
