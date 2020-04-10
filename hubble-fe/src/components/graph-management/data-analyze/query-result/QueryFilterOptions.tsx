@@ -213,7 +213,7 @@ const QueryFilterOptions: React.FC<{
                   dataAnalyzeStore.expandedGraphData.data.graph_view.vertices
                 );
                 cloneVertices.forEach(({ id, label, properties }) => {
-                  let cloneProperties = { ...properties };
+                  let cloneProperties = cloneDeep(properties);
                   cloneProperties['顶点ID'] = id;
                   let labelWords = '';
                   let flag = true;
@@ -325,7 +325,7 @@ const QueryFilterOptions: React.FC<{
                 );
                 cloneEdges.forEach(
                   ({ id, label, source, target, properties }) => {
-                    let cloneProperties = { ...properties };
+                    let cloneProperties = cloneDeep(properties);
                     cloneProperties['边类型'] = label;
                     let labelWords = '';
                     let flag = true;

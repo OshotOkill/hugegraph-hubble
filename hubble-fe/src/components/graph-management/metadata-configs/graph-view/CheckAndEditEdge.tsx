@@ -293,18 +293,6 @@ const CheckAndEditEdge: React.FC = observer(() => {
 
                 graphViewStore.visDataSet!.edges.update(updateInfo);
               }
-              edgeTypeStore.selectedEdgeType!.style.display_fields = cloneDeep(
-                edgeTypeStore.editedSelectedEdgeType.style.display_fields
-              );
-              edgeTypeStore.selectedEdgeType!.style.color = cloneDeep(
-                edgeTypeStore.editedSelectedEdgeType.style.color
-              );
-              edgeTypeStore.selectedEdgeType!.style.thickness = cloneDeep(
-                edgeTypeStore.editedSelectedEdgeType.style.thickness
-              );
-              edgeTypeStore.selectedEdgeType!.style.with_arrow = cloneDeep(
-                edgeTypeStore.editedSelectedEdgeType.style.with_arrow
-              );
               await edgeTypeStore.updateEdgeType();
 
               if (edgeTypeStore.requestStatus.updateEdgeType === 'failed') {

@@ -255,7 +255,7 @@ export class DataAnalyzeStore {
     this.nodeCount = 0;
     return cloneVertices.map(({ id, label, properties }) => {
       this.nodeCount++;
-      let cloneProperties = { ...properties };
+      let cloneProperties = cloneDeep(properties);
       cloneProperties['顶点ID'] = id;
       let labelWords = '';
       let flag = true;
@@ -289,7 +289,6 @@ export class DataAnalyzeStore {
             ? labelWords
             : labelWords.slice(0, 15) + '...',
         vLabel: id.length <= 15 ? id : id.slice(0, 15) + '...',
-        //原： 8 6 4 3 2
         value:
           this.vertexSizeMappings[label] === 'HUGE' || id === 'hiddenNodeOne'
             ? 40
@@ -369,7 +368,7 @@ export class DataAnalyzeStore {
     });
 
     return cloneEdges.map(({ id, label, source, target, properties }) => {
-      let cloneProperties = { ...properties };
+      let cloneProperties = cloneDeep(properties);
       cloneProperties['边类型'] = label;
       let labelWords = '';
       let flag = true;
@@ -405,7 +404,6 @@ export class DataAnalyzeStore {
         font: { size: 16, strokeWidth: 0, color: '#666' },
         arrows: this.edgeWithArrowMappings[label] === true ? 'to' : '',
         color: this.edgeColorMappings[label],
-        //原：8 4 2
         value:
           this.edgeThicknessMappings[label] === 'THICK'
             ? 45

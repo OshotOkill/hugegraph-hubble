@@ -293,15 +293,6 @@ const CheckAndEditVertex: React.FC = observer(() => {
 
                 graphViewStore.visDataSet!.nodes.update(updateInfo);
               }
-              vertexTypeStore.selectedVertexType!.style.display_fields = cloneDeep(
-                vertexTypeStore.editedSelectedVertexType.style.display_fields
-              );
-              vertexTypeStore.selectedVertexType!.style.color = cloneDeep(
-                vertexTypeStore.editedSelectedVertexType.style.color
-              );
-              vertexTypeStore.selectedVertexType!.style.size = cloneDeep(
-                vertexTypeStore.editedSelectedVertexType.style.size
-              );
               await vertexTypeStore.updateVertexType();
 
               if (vertexTypeStore.requestStatus.updateVertexType === 'failed') {

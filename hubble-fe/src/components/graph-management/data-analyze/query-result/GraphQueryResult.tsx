@@ -218,7 +218,7 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
                   dataAnalyzeStore.expandedGraphData.data.graph_view.vertices
                 );
                 cloneVertices.forEach(({ id, label, properties }) => {
-                  let cloneProperties = { ...properties };
+                  let cloneProperties = cloneDeep(properties);
                   cloneProperties['顶点ID'] = id;
                   let labelWords = '';
                   let flag = true;
@@ -328,7 +328,7 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
 
                 dataAnalyzeStore.expandedGraphData.data.graph_view.edges.forEach(
                   ({ id, label, source, target, properties }) => {
-                    let cloneProperties = { ...properties };
+                    let cloneProperties = cloneDeep(properties);
                     cloneProperties['边类型'] = label;
                     let labelWords = '';
                     let flag = true;
@@ -738,7 +738,7 @@ const GraphPopover: React.FC<{
             if (dataAnalyzeStore.requestStatus.expandGraphNode === 'success') {
               dataAnalyzeStore.expandedGraphData.data.graph_view.vertices.forEach(
                 ({ id, label, properties }) => {
-                  let cloneProperties = { ...properties };
+                  let cloneProperties = cloneDeep(properties);
                   cloneProperties['顶点ID'] = id;
                   let labelWords = '';
                   let flag = true;
