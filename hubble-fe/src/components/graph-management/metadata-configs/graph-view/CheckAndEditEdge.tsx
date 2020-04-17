@@ -638,7 +638,7 @@ const CheckAndEditEdge: React.FC = observer(() => {
                     <div
                       className="new-vertex-type-options-color"
                       style={{
-                        marginTop: 5,
+                        marginTop: 4,
                         marginLeft: 5
                       }}
                     >

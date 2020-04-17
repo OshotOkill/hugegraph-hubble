@@ -388,7 +388,7 @@ const CreateEdge: React.FC = observer(() => {
                       <div
                         className="new-vertex-type-options-color"
                         style={{
-                          marginTop: 6,
+                          marginTop: 4,
                           marginLeft: 5
                         }}
                       >

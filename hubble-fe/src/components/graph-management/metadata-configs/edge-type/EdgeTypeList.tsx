@@ -281,6 +281,15 @@ const EdgeTypeList: React.FC = observer(() => {
                 edgeTypeStore.editedSelectedEdgeType.style.display_fields = cloneDeep(
                   edgeTypeStore.selectedEdgeType!.style.display_fields
                 );
+                edgeTypeStore.editedSelectedEdgeType.style.color = cloneDeep(
+                  edgeTypeStore.selectedEdgeType!.style.color
+                );
+                edgeTypeStore.editedSelectedEdgeType.style.thickness = cloneDeep(
+                  edgeTypeStore.selectedEdgeType!.style.thickness
+                );
+                edgeTypeStore.editedSelectedEdgeType.style.with_arrow = cloneDeep(
+                  edgeTypeStore.selectedEdgeType!.style.with_arrow
+                );
               }}
             >
               编辑
@@ -930,7 +939,7 @@ const EdgeTypeList: React.FC = observer(() => {
                             <div
                               className="new-vertex-type-options-color"
                               style={{
-                                marginTop: 5,
+                                marginTop: 4,
                                 marginLeft: 5
                               }}
                             >

@@ -279,6 +279,12 @@ const VertexTypeList: React.FC = observer(() => {
                 vertexTypeStore.editedSelectedVertexType.style.display_fields = cloneDeep(
                   vertexTypeStore.selectedVertexType!.style.display_fields
                 );
+                vertexTypeStore.editedSelectedVertexType.style.size = cloneDeep(
+                  vertexTypeStore.selectedVertexType!.style.size
+                );
+                vertexTypeStore.editedSelectedVertexType.style.color = cloneDeep(
+                  vertexTypeStore.selectedVertexType!.style.color
+                );
               }}
             >
               编辑
@@ -862,7 +868,7 @@ const VertexTypeList: React.FC = observer(() => {
                           <div
                             className="new-vertex-type-options-color"
                             style={{
-                              marginTop: 5,
+                              marginTop: 4,
                               marginLeft: 5
                             }}
                           >
