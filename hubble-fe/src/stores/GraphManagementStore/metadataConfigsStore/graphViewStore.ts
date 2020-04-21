@@ -269,27 +269,26 @@ export class GraphViewStore {
     // this.currentDrawer = '';
     // this.currentSelected = '';
     // this.colorMappings = {};
-    // // this.vertexSizeMappings = {};
-    // // this.vertexWritingMappings = {};
-    // // this.edgeColorMappings = {};
-    // // this.edgeThicknessMappings = {};
-    // // this.edgeWithArrowMappings = {};
-    // this.edgeWritingMappings = {};
+    // this.edgeColorMappings = {};
     // this.graphViewData = null;
-    // this.originalGraphViewData = null;
-    // this.isGraphVertexEmpty = true;
     // this.isNodeOrEdgeClicked = false;
+    // this.isGraphVertexEmpty = true;
     // this.visNetwork = null;
     // this.visDataSet = null;
+    // // this.originalGraphViewData = null;
+    // this.requestStatus = {
+    //   fetchGraphViewData: 'standby'
+    // };
+    // this.errorInfo = {
+    //   fetchGraphViewData: {
+    //     code: NaN,
+    //     message: ''
+    //   }
+    // };
     this.currentDrawer = '';
     this.currentSelected = '';
     this.colorMappings = {};
-    this.edgeColorMappings = {};
     this.graphViewData = null;
-    this.isNodeOrEdgeClicked = false;
-    this.isGraphVertexEmpty = true;
-    this.visNetwork = null;
-    this.visDataSet = null;
     this.originalGraphViewData = null;
     this.requestStatus = {
       fetchGraphViewData: 'standby'
