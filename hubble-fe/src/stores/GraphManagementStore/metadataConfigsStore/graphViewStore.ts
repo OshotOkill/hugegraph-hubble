@@ -269,11 +269,11 @@ export class GraphViewStore {
     this.currentDrawer = '';
     this.currentSelected = '';
     this.colorMappings = {};
-    this.vertexSizeMappings = {};
-    this.vertexWritingMappings = {};
-    this.edgeColorMappings = {};
-    this.edgeThicknessMappings = {};
-    this.edgeWithArrowMappings = {};
+    // this.vertexSizeMappings = {};
+    // this.vertexWritingMappings = {};
+    // this.edgeColorMappings = {};
+    // this.edgeThicknessMappings = {};
+    // this.edgeWithArrowMappings = {};
     this.edgeWritingMappings = {};
     this.graphViewData = null;
     this.originalGraphViewData = null;
