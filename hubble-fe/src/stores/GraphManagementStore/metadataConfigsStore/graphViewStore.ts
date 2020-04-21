@@ -277,6 +277,10 @@ export class GraphViewStore {
     this.edgeWritingMappings = {};
     this.graphViewData = null;
     this.originalGraphViewData = null;
+    this.isNodeOrEdgeClicked = false;
+    this.isGraphVertexEmpty = true;
+    this.visNetwork = null;
+    this.visDataSet = null;
     this.requestStatus = {
       fetchGraphViewData: 'standby'
     };
