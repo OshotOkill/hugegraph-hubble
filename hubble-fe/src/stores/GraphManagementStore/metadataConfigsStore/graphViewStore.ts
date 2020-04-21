@@ -278,6 +278,7 @@ export class GraphViewStore {
     this.graphViewData = null;
     this.originalGraphViewData = null;
     this.isGraphVertexEmpty = true;
+    this.isNodeOrEdgeClicked = false;
     this.visNetwork = null;
     this.visDataSet = null;
     this.requestStatus = {
