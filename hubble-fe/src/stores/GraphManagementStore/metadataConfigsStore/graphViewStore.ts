@@ -291,19 +291,19 @@ export class GraphViewStore {
   fetchGraphViewData = flow(function* fetchGraphViewData(
     this: GraphViewStore,
     // vertexColorMappings?: Record<string, string>,
-    vertexColorMappings = {},
     // vertexSizeMappings?: Record<string, string>,
-    vertexSizeMappings = {},
     // vertexWritingMappings?: Record<string, string[]>,
-    vertexWritingMappings = {},
     // edgeColorMappings?: Record<string, string>,
     // edgeThicknessMappings?: Record<string, string>,
-    edgeThicknessMappings = {},
     // edgeWithArrowMappings?: Record<string, boolean>,
-    edgeWithArrowMappings = {},
     // edgeWritingMappings?: Record<string, string[]>,
+
+    vertexColorMappings = {},
+    vertexSizeMappings = {},
+    vertexWritingMappings = {},
+    edgeThicknessMappings = {},
+    edgeWithArrowMappings = {},
     edgeWritingMappings = {},
-    // vertexColorMappings = {},
 
     colorMappings = {},
     edgeColorMappings = {},
@@ -312,12 +312,6 @@ export class GraphViewStore {
     isGraphVertexEmpty = true,
     visNetwork = null,
     visDataSet = null
-    // colorMappings = {},
-    // GraphViewData = null,
-    // isNodeOrEdgeClicked = false,
-    // isGraphVertexEmpty = true,
-    // visNetwork = null,
-    // visDataSet = null
   ) {
     this.requestStatus.fetchGraphViewData = 'pending';
 
