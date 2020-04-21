@@ -286,10 +286,11 @@ export class GraphViewStore {
     this.colorMappings = {};
     this.edgeColorMappings = {};
     this.graphViewData = null;
+    this.isNodeOrEdgeClicked = false;
+    this.isGraphVertexEmpty = true;
+    this.visNetwork = null;
+    this.visDataSet = null;
     this.originalGraphViewData = null;
-    this.requestStatus = {
-      fetchGraphViewData: 'standby'
-    };
     this.requestStatus = {
       fetchGraphViewData: 'standby'
     };
