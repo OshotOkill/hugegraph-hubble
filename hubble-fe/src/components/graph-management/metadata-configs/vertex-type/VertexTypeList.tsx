@@ -658,7 +658,7 @@ const VertexTypeList: React.FC = observer(() => {
                       vertexTypeStore.editedSelectedVertexType.style.color !==
                       null
                     ) {
-                      dataAnalyzeStore.vertexColorMappings[id] =
+                      dataAnalyzeStore.colorMappings[id] =
                         vertexTypeStore.editedSelectedVertexType.style.color;
                     }
 

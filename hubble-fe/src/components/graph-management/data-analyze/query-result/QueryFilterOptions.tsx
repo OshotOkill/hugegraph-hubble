@@ -286,11 +286,9 @@ const QueryFilterOptions: React.FC<{
                         : true,
                     color: {
                       background:
-                        dataAnalyzeStore.vertexColorMappings[label] ||
-                        '#5c73e6',
+                        dataAnalyzeStore.colorMappings[label] || '#5c73e6',
                       border:
-                        dataAnalyzeStore.vertexColorMappings[label] ||
-                        '#5c73e6',
+                        dataAnalyzeStore.colorMappings[label] || '#5c73e6',
                       highlight: {
                         background: '#fb6a02',
                         border: '#fb6a02'

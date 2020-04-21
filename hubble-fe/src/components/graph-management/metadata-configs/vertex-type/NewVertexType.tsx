@@ -878,7 +878,7 @@ const NewVertexType: React.FC = observer(() => {
               }
               const id = vertexTypeStore.newVertexType.name;
               if (vertexTypeStore.newVertexType.style.color !== null) {
-                dataAnalyzeStore.vertexColorMappings[
+                dataAnalyzeStore.colorMappings[
                   id
                 ] = vertexTypeStore.newVertexType.style.color!;
               }

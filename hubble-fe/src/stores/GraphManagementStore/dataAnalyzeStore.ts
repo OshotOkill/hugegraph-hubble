@@ -71,7 +71,7 @@ export class DataAnalyzeStore {
   @observable.ref valueTypes: Record<string, string> = {};
   @observable.ref colorSchemas: ColorSchemas = {};
   @observable.ref colorList: string[] = [];
-  @observable.ref vertexColorMappings: Record<string, string> = {};
+  @observable.ref colorMappings: Record<string, string> = {};
   @observable.ref vertexSizeMappings: Record<string, string> = {};
   @observable.ref vertexWritingMappings: Record<string, string[]> = {};
   @observable.ref edgeColorMappings: Record<string, string> = {};
@@ -326,8 +326,8 @@ export class DataAnalyzeStore {
             ? false
             : true,
         color: {
-          background: this.vertexColorMappings[label] || '#5c73e6',
-          border: this.vertexColorMappings[label] || '#5c73e6',
+          background: this.colorMappings[label] || '#5c73e6',
+          border: this.colorMappings[label] || '#5c73e6',
           highlight: { background: '#fb6a02', border: '#fb6a02' },
           hover: { background: '#ec3112', border: '#ec3112' }
         },
@@ -884,7 +884,7 @@ export class DataAnalyzeStore {
 
       result.data.data.records.forEach(({ name, style }) => {
         if (style.color !== null) {
-          this.vertexColorMappings[name] = style.color;
+          this.colorMappings[name] = style.color;
         }
         if (style.size !== null) {
           this.vertexSizeMappings[name] = style.size;

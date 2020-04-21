@@ -211,7 +211,7 @@ const CreateVertex: React.FC = observer(() => {
                 // the graph use graphNode() rather than local added node
                 await dataAnalyzeStore.fetchAllNodeStyle();
                 graphViewStore.fetchGraphViewData(
-                  dataAnalyzeStore.vertexColorMappings,
+                  dataAnalyzeStore.colorMappings,
                   dataAnalyzeStore.vertexSizeMappings,
                   dataAnalyzeStore.vertexWritingMappings,
                   dataAnalyzeStore.edgeColorMappings,

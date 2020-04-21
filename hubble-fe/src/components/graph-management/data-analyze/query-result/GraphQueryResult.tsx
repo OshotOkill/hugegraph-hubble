@@ -292,11 +292,9 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
                         : true,
                     color: {
                       background:
-                        dataAnalyzeStore.vertexColorMappings[label] ||
-                        '#5c73e6',
+                        dataAnalyzeStore.colorMappings[label] || '#5c73e6',
                       border:
-                        dataAnalyzeStore.vertexColorMappings[label] ||
-                        '#5c73e6',
+                        dataAnalyzeStore.colorMappings[label] || '#5c73e6',
                       highlight: {
                         background: '#fb6a02',
                         border: '#fb6a02'
@@ -554,8 +552,7 @@ const GraphQueryResult: React.FC<GraphQueryResult> = observer(({ hidden }) => {
                         borderRadius: 5,
                         marginRight: 5,
                         backgroundColor:
-                          dataAnalyzeStore.vertexColorMappings[label] ||
-                          '#5c73e6'
+                          dataAnalyzeStore.colorMappings[label] || '#5c73e6'
                       }}
                     ></div>
                     <div>{label}</div>
@@ -813,11 +810,9 @@ const GraphPopover: React.FC<{
                         : true,
                     color: {
                       background:
-                        dataAnalyzeStore.vertexColorMappings[label] ||
-                        '#5c73e6',
+                        dataAnalyzeStore.colorMappings[label] || '#5c73e6',
                       border:
-                        dataAnalyzeStore.vertexColorMappings[label] ||
-                        '#5c73e6',
+                        dataAnalyzeStore.colorMappings[label] || '#5c73e6',
                       highlight: {
                         background: '#fb6a02',
                         border: '#fb6a02'

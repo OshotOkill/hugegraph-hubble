@@ -181,7 +181,7 @@ const GraphDataView: React.FC = observer(() => {
 
   useEffect(() => {
     graphViewStore.fetchGraphViewData(
-      dataAnalyzeStore.vertexColorMappings,
+      dataAnalyzeStore.colorMappings,
       dataAnalyzeStore.vertexSizeMappings,
       dataAnalyzeStore.vertexWritingMappings,
       dataAnalyzeStore.edgeColorMappings,
@@ -194,7 +194,7 @@ const GraphDataView: React.FC = observer(() => {
       graphViewStore.dispose();
     };
   }, [
-    dataAnalyzeStore.vertexColorMappings,
+    dataAnalyzeStore.colorMappings,
     dataAnalyzeStore.vertexSizeMappings,
     dataAnalyzeStore.vertexWritingMappings,
     dataAnalyzeStore.edgeColorMappings,

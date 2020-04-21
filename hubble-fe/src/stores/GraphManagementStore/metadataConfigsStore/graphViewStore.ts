@@ -18,7 +18,7 @@ export class GraphViewStore {
     this.metadataConfigsRootStore = MetadataConfigsRootStore;
   }
 
-  @observable.ref vertexColorMappings: Record<string, string> = {};
+  @observable.ref colorMappings: Record<string, string> = {};
   @observable.ref vertexSizeMappings: Record<string, string> = {};
   @observable.ref vertexWritingMappings: Record<string, string[]> = {};
   @observable.ref edgeColorMappings: Record<string, string> = {};
@@ -133,8 +133,8 @@ export class GraphViewStore {
             ? false
             : true,
         color: {
-          background: this.vertexColorMappings[label] || '#5c73e6',
-          border: this.vertexColorMappings[label] || '#5c73e6',
+          background: this.colorMappings[label] || '#5c73e6',
+          border: this.colorMappings[label] || '#5c73e6',
           highlight: { background: '#fb6a02', border: '#fb6a02' },
           hover: { background: '#ec3112', border: '#ec3112' }
         },
@@ -268,7 +268,7 @@ export class GraphViewStore {
   dispose() {
     this.currentDrawer = '';
     this.currentSelected = '';
-    this.vertexColorMappings = {};
+    this.colorMappings = {};
     this.vertexSizeMappings = {};
     this.vertexWritingMappings = {};
     this.edgeColorMappings = {};
@@ -277,7 +277,6 @@ export class GraphViewStore {
     this.edgeWritingMappings = {};
     this.graphViewData = null;
     this.originalGraphViewData = null;
-    this.isNodeOrEdgeClicked = false;
     this.isGraphVertexEmpty = true;
     this.visNetwork = null;
     this.visDataSet = null;
@@ -294,7 +293,7 @@ export class GraphViewStore {
 
   fetchGraphViewData = flow(function* fetchGraphViewData(
     this: GraphViewStore,
-    // vertexColorMappings?: Record<string, string>,
+    // colorMappings?: Record<string, string>,
     // vertexSizeMappings?: Record<string, string>,
     // vertexWritingMappings?: Record<string, string[]>,
     // edgeColorMappings?: Record<string, string>,
@@ -302,25 +301,31 @@ export class GraphViewStore {
     // edgeWithArrowMappings?: Record<string, boolean>,
     // edgeWritingMappings?: Record<string, string[]>,
 
-    vertexColorMappings = {},
+    colorMappings = {},
     vertexSizeMappings = {},
     vertexWritingMappings = {},
     edgeThicknessMappings = {},
     edgeWithArrowMappings = {},
     edgeWritingMappings = {},
 
-    colorMappings = {},
-    edgeColorMappings = {},
-    graphViewData = null,
-    isNodeOrEdgeClicked = false,
-    isGraphVertexEmpty = true,
-    visNetwork = null,
-    visDataSet = null
+    // colorMappings = {},
+    edgeColorMappings = {}
+    // graphViewData = null,
+    // isNodeOrEdgeClicked = false,
+    // isGraphVertexEmpty = true,
+    // visNetwork = null,
+    // visDataSet = null
+    // colorMappings = {},
+    // GraphViewData = null,
+    // isNodeOrEdgeClicked = false,
+    // isGraphVertexEmpty = true,
+    // visNetwork = null,
+    // visDataSet = null
   ) {
     this.requestStatus.fetchGraphViewData = 'pending';
 
-    if (!isUndefined(vertexColorMappings)) {
-      this.vertexColorMappings = vertexColorMappings;
+    if (!isUndefined(colorMappings)) {
+      this.colorMappings = colorMappings;
     }
     if (!isUndefined(vertexSizeMappings)) {
       this.vertexSizeMappings = vertexSizeMappings;
