@@ -28,6 +28,11 @@ import {
 
 import BlueArrowIcon from '../../../../assets/imgs/ic_arrow_blue.svg';
 import CloseIcon from '../../../../assets/imgs/ic_close_16.svg';
+import { VertexTypeStore } from '../../../../stores/GraphManagementStore/metadataConfigsStore/vertexTypeStore';
+import SelectedSoilidArrowIcon from '../../../../assets/imgs/ic_arrow_selected.svg';
+import NoSelectedSoilidArrowIcon from '../../../../assets/imgs/ic_arrow.svg';
+import SelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight_selected.svg';
+import NoSelectedSoilidStraightIcon from '../../../../assets/imgs/ic_straight.svg';
 
 const propertyIndexTypeMappings: Record<string, string> = {
   SECONDARY: '二级索引',
@@ -178,11 +183,28 @@ const CheckAndEditEdge: React.FC = observer(() => {
           type="primary"
           size="medium"
           style={{ width: 60 }}
-          disabled={isEditEdge && !edgeTypeStore.isEditReady}
+          disabled={
+            isEditEdge &&
+            (edgeTypeStore.editedSelectedEdgeType.style.display_fields
+              .length === 0 ||
+              !edgeTypeStore.isEditReady)
+          }
           onClick={async () => {
             if (!isEditEdge) {
               graphViewStore.setCurrentDrawer('edit-edge');
               edgeTypeStore.validateEditEdgeType();
+              edgeTypeStore.editedSelectedEdgeType.style.display_fields = cloneDeep(
+                edgeTypeStore.selectedEdgeType!.style.display_fields
+              );
+              edgeTypeStore.editedSelectedEdgeType.style.color = cloneDeep(
+                edgeTypeStore.selectedEdgeType!.style.color
+              );
+              edgeTypeStore.editedSelectedEdgeType.style.thickness = cloneDeep(
+                edgeTypeStore.selectedEdgeType!.style.thickness
+              );
+              edgeTypeStore.editedSelectedEdgeType.style.with_arrow = cloneDeep(
+                edgeTypeStore.selectedEdgeType!.style.with_arrow
+              );
             } else {
               const id = generateGraphModeId(
                 edgeTypeStore.selectedEdgeType!.name,
@@ -242,12 +264,35 @@ const CheckAndEditEdge: React.FC = observer(() => {
                 };
               }
 
+              if (
+                edgeTypeStore.editedSelectedEdgeType.style.with_arrow !== null
+              ) {
+                updateInfo.arrows =
+                  edgeTypeStore.editedSelectedEdgeType.style.with_arrow === true
+                    ? 'to'
+                    : '';
+              }
+
+              if (
+                edgeTypeStore.editedSelectedEdgeType.style.thickness !== null
+              ) {
+                updateInfo.value =
+                  edgeTypeStore.editedSelectedEdgeType.style.thickness ===
+                  'THICK'
+                    ? 45
+                    : edgeTypeStore.editedSelectedEdgeType.style.thickness ===
+                      'NORMAL'
+                    ? 20
+                    : id === 'hiddenEdgeOne'
+                    ? 45
+                    : -10;
+              }
+
               if (!isEmpty(updateInfo)) {
                 updateInfo.id = id;
 
                 graphViewStore.visDataSet!.edges.update(updateInfo);
               }
-
               await edgeTypeStore.updateEdgeType();
 
               if (edgeTypeStore.requestStatus.updateEdgeType === 'failed') {
@@ -271,8 +316,8 @@ const CheckAndEditEdge: React.FC = observer(() => {
               graphViewStore.visNetwork!.unselectAll();
               graphViewStore.setCurrentDrawer('');
               edgeTypeStore.selectEdgeType(null);
-              edgeTypeStore.resetEditedSelectedEdgeType();
               edgeTypeStore.fetchEdgeTypeList();
+              // edgeTypeStore.resetEditedSelectedEdgeType();
             }
           }}
           key="drawer-manipulation"
@@ -373,6 +418,100 @@ const CheckAndEditEdge: React.FC = observer(() => {
               <span>边类型名称：</span>
             </div>
             {edgeTypeStore.selectedEdgeType!.name}
+          </div>
+
+          <div className="metadata-drawer-options">
+            <div className="metadata-drawer-options-name">
+              <span
+                className={
+                  isEditEdge ? 'metadata-drawer-options-name-edit' : ''
+                }
+              >
+                边样式：
+              </span>
+            </div>
+            <div className="new-vertex-type-options-colors">
+              <Select
+                width={66}
+                size="medium"
+                prefixCls="new-fc-one-select-another"
+                dropdownMatchSelectWidth={false}
+                showSearch={false}
+                disabled={!isEditEdge}
+                value={
+                  <div
+                    className="new-vertex-type-select"
+                    style={{
+                      background:
+                        edgeTypeStore.editedSelectedEdgeType.style.color !==
+                        null
+                          ? edgeTypeStore.editedSelectedEdgeType.style.color.toLowerCase()
+                          : edgeTypeStore.selectedEdgeType!.style.color!.toLowerCase(),
+                      marginTop: 5
+                    }}
+                  ></div>
+                }
+                onChange={(value: string) => {
+                  edgeTypeStore.mutateEditedSelectedEdgeType({
+                    ...edgeTypeStore.editedSelectedEdgeType,
+                    style: {
+                      color: value,
+                      icon: null,
+                      with_arrow:
+                        edgeTypeStore.editedSelectedEdgeType.style
+                          .with_arrow !== null
+                          ? edgeTypeStore.editedSelectedEdgeType.style
+                              .with_arrow
+                          : edgeTypeStore.selectedEdgeType!.style.with_arrow,
+                      thickness:
+                        edgeTypeStore.editedSelectedEdgeType.style.thickness !==
+                        null
+                          ? edgeTypeStore.editedSelectedEdgeType.style.thickness
+                          : edgeTypeStore.selectedEdgeType!.style.thickness,
+                      display_fields:
+                        edgeTypeStore.editedSelectedEdgeType.style
+                          .display_fields.length !== 0
+                          ? edgeTypeStore.editedSelectedEdgeType.style
+                              .display_fields
+                          : edgeTypeStore.editedSelectedEdgeType!.style
+                              .display_fields
+                    }
+                  });
+                }}
+              >
+                {edgeTypeStore.colorSchemas.map(
+                  (color: string, index: number) => (
+                    <Select.Option
+                      value={color}
+                      key={color}
+                      style={{
+                        display: 'inline-block',
+                        marginLeft: index % 5 === 0 ? 8 : 0,
+                        marginTop: index < 5 ? 6 : 2,
+                        width: 31
+                      }}
+                    >
+                      <div
+                        className={
+                          (edgeTypeStore.editedSelectedEdgeType.style.color !==
+                          null
+                            ? edgeTypeStore.editedSelectedEdgeType.style.color.toLowerCase()
+                            : edgeTypeStore.selectedEdgeType!.style.color!.toLowerCase()) ===
+                          color
+                            ? 'new-vertex-type-options-border new-vertex-type-options-color'
+                            : 'new-vertex-type-options-no-border new-vertex-type-options-color'
+                        }
+                        style={{
+                          background: color,
+                          marginLeft: -4,
+                          marginTop: 4.4
+                        }}
+                      ></div>
+                    </Select.Option>
+                  )
+                )}
+              </Select>
+            </div>
             <div className="new-vertex-type-options-colors">
               <Select
                 width={66}
@@ -380,29 +519,131 @@ const CheckAndEditEdge: React.FC = observer(() => {
                 showSearch={false}
                 disabled={!isEditEdge}
                 value={
-                  edgeTypeStore.editedSelectedEdgeType.style.color !== null
-                    ? edgeTypeStore.editedSelectedEdgeType.style.color.toLowerCase()
-                    : edgeTypeStore.selectedEdgeType!.style.color!.toLowerCase()
+                  (edgeTypeStore.editedSelectedEdgeType.style.with_arrow !==
+                  null ? (
+                    edgeTypeStore.editedSelectedEdgeType.style.with_arrow
+                  ) : (
+                    edgeTypeStore.selectedEdgeType!.style.with_arrow
+                  )) ? (
+                    <div>
+                      <img src={NoSelectedSoilidArrowIcon} />
+                    </div>
+                  ) : (
+                    <div>
+                      <img src={NoSelectedSoilidStraightIcon} />
+                    </div>
+                  )
+                }
+                onChange={(e: any) => {
+                  edgeTypeStore.mutateEditedSelectedEdgeType({
+                    ...edgeTypeStore.editedSelectedEdgeType,
+                    style: {
+                      with_arrow: e[0] && e[1] === 'solid',
+                      color:
+                        edgeTypeStore.editedSelectedEdgeType.style.color !==
+                        null
+                          ? edgeTypeStore.editedSelectedEdgeType.style.color.toLowerCase()
+                          : edgeTypeStore.selectedEdgeType!.style.color!.toLowerCase(),
+                      icon: null,
+                      thickness:
+                        edgeTypeStore.editedSelectedEdgeType.style.thickness !==
+                        null
+                          ? edgeTypeStore.editedSelectedEdgeType.style.thickness
+                          : edgeTypeStore.selectedEdgeType!.style.thickness,
+                      display_fields:
+                        edgeTypeStore.editedSelectedEdgeType.style
+                          .display_fields.length !== 0
+                          ? edgeTypeStore.editedSelectedEdgeType.style
+                              .display_fields
+                          : edgeTypeStore.selectedEdgeType!.style.display_fields
+                    }
+                  });
+                }}
+              >
+                {edgeTypeStore.edgeShapeSchemas.map((item, index) => (
+                  <Select.Option
+                    value={[item.flag, item.shape]}
+                    key={item.flag}
+                    style={{ width: 66 }}
+                  >
+                    <div
+                      className="new-vertex-type-options-color"
+                      style={{ marginTop: 5, marginLeft: 5 }}
+                    >
+                      <img
+                        src={
+                          edgeTypeStore.editedSelectedEdgeType.style
+                            .with_arrow === null
+                            ? item.flag ===
+                              edgeTypeStore.selectedEdgeType!.style.with_arrow
+                              ? item.blueicon
+                              : item.blackicon
+                            : edgeTypeStore.editedSelectedEdgeType.style
+                                .with_arrow === item.flag
+                            ? item.blueicon
+                            : item.blackicon
+                        }
+                        alt="toogleEdgeArrow"
+                      />
+                    </div>
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
+            <div className="new-vertex-type-options-colors">
+              <Select
+                width={66}
+                size="medium"
+                showSearch={false}
+                disabled={!isEditEdge}
+                style={{ paddingLeft: 7 }}
+                value={
+                  edgeTypeStore.editedSelectedEdgeType.style.thickness !== null
+                    ? edgeTypeStore.editedSelectedEdgeType.style.thickness
+                    : edgeTypeStore.selectedEdgeType!.style.thickness
                 }
                 onChange={(value: string) => {
                   edgeTypeStore.mutateEditedSelectedEdgeType({
                     ...edgeTypeStore.editedSelectedEdgeType,
                     style: {
-                      color: value,
-                      icon: null
+                      with_arrow:
+                        edgeTypeStore.editedSelectedEdgeType.style
+                          .with_arrow !== null
+                          ? edgeTypeStore.editedSelectedEdgeType.style
+                              .with_arrow
+                          : edgeTypeStore.selectedEdgeType!.style.with_arrow,
+                      color:
+                        edgeTypeStore.editedSelectedEdgeType.style.color !==
+                        null
+                          ? edgeTypeStore.editedSelectedEdgeType.style.color.toLowerCase()
+                          : edgeTypeStore.selectedEdgeType!.style.color!.toLowerCase(),
+                      icon: null,
+                      thickness: value,
+                      display_fields:
+                        edgeTypeStore.editedSelectedEdgeType.style
+                          .display_fields.length !== 0
+                          ? edgeTypeStore.editedSelectedEdgeType.style
+                              .display_fields
+                          : edgeTypeStore.selectedEdgeType!.style.display_fields
                     }
                   });
                 }}
               >
-                {edgeTypeStore.colorSchemas.map((color: string) => (
-                  <Select.Option value={color} key={color}>
+                {edgeTypeStore.thicknessSchemas.map((value, index) => (
+                  <Select.Option
+                    value={value.en}
+                    key={value.en}
+                    style={{ width: 66 }}
+                  >
                     <div
                       className="new-vertex-type-options-color"
                       style={{
-                        background: color,
-                        marginTop: 6
+                        marginTop: 4,
+                        marginLeft: 5
                       }}
-                    ></div>
+                    >
+                      {value.ch}
+                    </div>
                   </Select.Option>
                 ))}
               </Select>
@@ -419,6 +660,18 @@ const CheckAndEditEdge: React.FC = observer(() => {
               <span>终点类型：</span>
             </div>
             {edgeTypeStore.selectedEdgeType!.target_label}
+          </div>
+          <div className={metadataDrawerOptionClass}>
+            <div className="metadata-drawer-options-name">
+              <span>允许多次连接：</span>
+            </div>
+            <Switch
+              checkedChildren="开"
+              unCheckedChildren="关"
+              checked={edgeTypeStore.selectedEdgeType!.link_multi_times}
+              size="large"
+              disabled
+            />
           </div>
           <div className="metadata-drawer-options">
             <div className="metadata-drawer-options-name">
@@ -550,21 +803,125 @@ const CheckAndEditEdge: React.FC = observer(() => {
 
           <div className={metadataDrawerOptionClass}>
             <div className="metadata-drawer-options-name">
-              <span>允许多次连接：</span>
-            </div>
-            <Switch
-              checkedChildren="开"
-              unCheckedChildren="关"
-              checked={edgeTypeStore.selectedEdgeType!.link_multi_times}
-              size="large"
-              disabled
-            />
-          </div>
-          <div className={metadataDrawerOptionClass}>
-            <div className="metadata-drawer-options-name">
               <span>区分键属性：</span>
             </div>
             {edgeTypeStore.selectedEdgeType!.sort_keys.join(';')}
+          </div>
+
+          <div className="metadata-drawer-options">
+            <div className="metadata-drawer-options-name">
+              <span
+                className={
+                  isEditEdge ? 'metadata-drawer-options-name-edit' : ''
+                }
+              >
+                边展示内容：
+              </span>
+            </div>
+            {isEditEdge ? (
+              <Select
+                width={420}
+                mode="multiple"
+                size="medium"
+                showSearch={false}
+                disabled={!isEditEdge}
+                placeholder="请选择边展示内容"
+                onChange={(value: string[]) => {
+                  edgeTypeStore.mutateEditedSelectedEdgeType({
+                    ...edgeTypeStore.editedSelectedEdgeType,
+                    style: {
+                      color:
+                        edgeTypeStore.editedSelectedEdgeType.style.color !==
+                        null
+                          ? edgeTypeStore.editedSelectedEdgeType.style.color.toLowerCase()
+                          : edgeTypeStore.selectedEdgeType!.style.color!.toLowerCase(),
+                      icon: null,
+                      display_fields: value,
+                      thickness:
+                        edgeTypeStore.editedSelectedEdgeType.style.thickness !==
+                        null
+                          ? edgeTypeStore.editedSelectedEdgeType.style.thickness
+                          : edgeTypeStore.selectedEdgeType!.style.thickness,
+                      with_arrow:
+                        edgeTypeStore.editedSelectedEdgeType.style
+                          .with_arrow !== null
+                          ? edgeTypeStore.editedSelectedEdgeType.style
+                              .with_arrow
+                          : edgeTypeStore.selectedEdgeType!.style.with_arrow
+                    }
+                  });
+                }}
+                value={(() => {
+                  let cloneDisplayFeilds =
+                    edgeTypeStore.editedSelectedEdgeType.style.display_fields;
+                  cloneDisplayFeilds.map((item, index) => {
+                    if (item === '~id') {
+                      cloneDisplayFeilds[index] = '边类型';
+                    }
+                  });
+                  return cloneDisplayFeilds;
+                })()}
+              >
+                {edgeTypeStore.selectedEdgeType?.properties
+                  .concat({ name: '边类型', nullable: false })
+                  .concat(
+                    edgeTypeStore.editedSelectedEdgeType.append_properties
+                  )
+                  .filter(({ nullable }) => !nullable)
+                  .map(item => {
+                    const order = edgeTypeStore.editedSelectedEdgeType.style.display_fields.findIndex(
+                      name => name === item.name
+                    );
+
+                    const multiSelectOptionClassName = classnames({
+                      'metadata-configs-sorted-multiSelect-option': true,
+                      'metadata-configs-sorted-multiSelect-option-selected':
+                        order !== -1
+                    });
+
+                    return (
+                      <Select.Option value={item.name} key={item.name}>
+                        <div className={multiSelectOptionClassName}>
+                          <div
+                            style={{
+                              backgroundColor: edgeTypeStore.editedSelectedEdgeType.style.display_fields.includes(
+                                item.name
+                              )
+                                ? '#2b65ff'
+                                : '#fff',
+                              borderColor: edgeTypeStore.editedSelectedEdgeType.style.display_fields.includes(
+                                item.name
+                              )
+                                ? '#fff'
+                                : '#e0e0e0'
+                            }}
+                          >
+                            {order !== -1 ? order + 1 : ''}
+                          </div>
+                          <div style={{ color: '#333' }}>{item.name}</div>
+                        </div>
+                      </Select.Option>
+                    );
+                  })}
+              </Select>
+            ) : (
+              <div>
+                {(() => {
+                  edgeTypeStore.selectedEdgeType!.style.display_fields.forEach(
+                    (item, index) => {
+                      if (item === '~id') {
+                        edgeTypeStore.selectedEdgeType!.style.display_fields[
+                          index
+                        ] = '边类型';
+                      }
+                    }
+                  );
+                  return edgeTypeStore.selectedEdgeType!.style.display_fields.join(
+                    '-'
+                  );
+                })()}
+              </div>
+            )}
           </div>
 
           <div
