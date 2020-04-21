@@ -266,21 +266,30 @@ export class GraphViewStore {
 
   @action
   dispose() {
+    // this.currentDrawer = '';
+    // this.currentSelected = '';
+    // this.colorMappings = {};
+    // // this.vertexSizeMappings = {};
+    // // this.vertexWritingMappings = {};
+    // // this.edgeColorMappings = {};
+    // // this.edgeThicknessMappings = {};
+    // // this.edgeWithArrowMappings = {};
+    // this.edgeWritingMappings = {};
+    // this.graphViewData = null;
+    // this.originalGraphViewData = null;
+    // this.isGraphVertexEmpty = true;
+    // this.isNodeOrEdgeClicked = false;
+    // this.visNetwork = null;
+    // this.visDataSet = null;
     this.currentDrawer = '';
     this.currentSelected = '';
     this.colorMappings = {};
-    // this.vertexSizeMappings = {};
-    // this.vertexWritingMappings = {};
-    // this.edgeColorMappings = {};
-    // this.edgeThicknessMappings = {};
-    // this.edgeWithArrowMappings = {};
-    this.edgeWritingMappings = {};
+    this.edgeColorMappings = {};
     this.graphViewData = null;
     this.originalGraphViewData = null;
-    this.isGraphVertexEmpty = true;
-    this.isNodeOrEdgeClicked = false;
-    this.visNetwork = null;
-    this.visDataSet = null;
+    this.requestStatus = {
+      fetchGraphViewData: 'standby'
+    };
     this.requestStatus = {
       fetchGraphViewData: 'standby'
     };
