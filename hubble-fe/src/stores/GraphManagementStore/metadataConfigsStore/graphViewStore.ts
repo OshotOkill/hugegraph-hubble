@@ -296,7 +296,13 @@ export class GraphViewStore {
     edgeColorMappings?: Record<string, string>,
     edgeThicknessMappings?: Record<string, string>,
     edgeWithArrowMappings?: Record<string, boolean>,
-    edgeWritingMappings?: Record<string, string[]>
+    edgeWritingMappings?: Record<string, string[]>,
+    colorMappings = {},
+    GraphViewData = null,
+    isNodeOrEdgeClicked = false,
+    isGraphVertexEmpty = true,
+    visNetwork = null,
+    visDataSet = null
   ) {
     this.requestStatus.fetchGraphViewData = 'pending';
 
