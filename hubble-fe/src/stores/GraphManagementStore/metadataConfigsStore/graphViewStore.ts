@@ -266,25 +266,7 @@ export class GraphViewStore {
 
   @action
   dispose() {
-    // this.currentDrawer = '';
-    // this.currentSelected = '';
-    // this.colorMappings = {};
-    // this.edgeColorMappings = {};
-    // this.graphViewData = null;
-    // this.isNodeOrEdgeClicked = false;
-    // this.isGraphVertexEmpty = true;
-    // this.visNetwork = null;
-    // this.visDataSet = null;
-    // // this.originalGraphViewData = null;
-    // this.requestStatus = {
-    //   fetchGraphViewData: 'standby'
-    // };
-    // this.errorInfo = {
-    //   fetchGraphViewData: {
-    //     code: NaN,
-    //     message: ''
-    //   }
-    // };
+    this.edgeColorMappings = {};
     this.currentDrawer = '';
     this.currentSelected = '';
     this.colorMappings = {};
@@ -303,34 +285,13 @@ export class GraphViewStore {
 
   fetchGraphViewData = flow(function* fetchGraphViewData(
     this: GraphViewStore,
-    // colorMappings?: Record<string, string>,
-    // vertexSizeMappings?: Record<string, string>,
-    // vertexWritingMappings?: Record<string, string[]>,
-    // edgeColorMappings?: Record<string, string>,
-    // edgeThicknessMappings?: Record<string, string>,
-    // edgeWithArrowMappings?: Record<string, boolean>,
-    // edgeWritingMappings?: Record<string, string[]>,
-
-    colorMappings = {},
-    vertexSizeMappings = {},
-    vertexWritingMappings = {},
-    edgeThicknessMappings = {},
-    edgeWithArrowMappings = {},
-    edgeWritingMappings = {},
-
-    // colorMappings = {},
-    edgeColorMappings = {}
-    // graphViewData = null,
-    // isNodeOrEdgeClicked = false,
-    // isGraphVertexEmpty = true,
-    // visNetwork = null,
-    // visDataSet = null
-    // colorMappings = {},
-    // GraphViewData = null,
-    // isNodeOrEdgeClicked = false,
-    // isGraphVertexEmpty = true,
-    // visNetwork = null,
-    // visDataSet = null
+    colorMappings?: Record<string, string>,
+    vertexSizeMappings?: Record<string, string>,
+    vertexWritingMappings?: Record<string, string[]>,
+    edgeColorMappings?: Record<string, string>,
+    edgeThicknessMappings?: Record<string, string>,
+    edgeWithArrowMappings?: Record<string, boolean>,
+    edgeWritingMappings?: Record<string, string[]>
   ) {
     this.requestStatus.fetchGraphViewData = 'pending';
 
