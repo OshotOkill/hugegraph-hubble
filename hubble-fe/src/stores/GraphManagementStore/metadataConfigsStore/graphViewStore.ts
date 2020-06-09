@@ -1,6 +1,6 @@
 import { observable, action, flow, computed } from 'mobx';
 import axios from 'axios';
-import { isUndefined } from 'lodash-es';
+import { isUndefined, cloneDeep, clone } from 'lodash-es';
 
 import vis from 'vis-network';
 import { MetadataConfigsRootStore } from './metadataConfigsStore';
@@ -18,8 +18,14 @@ export class GraphViewStore {
     this.metadataConfigsRootStore = MetadataConfigsRootStore;
   }
 
-  colorMappings: Record<string, string> = {};
-  edgeColorMappings: Record<string, string> = {};
+  @observable.ref colorMappings: Record<string, string> = {};
+  @observable.ref vertexSizeMappings: Record<string, string> = {};
+  @observable.ref vertexWritingMappings: Record<string, string[]> = {};
+  @observable.ref edgeColorMappings: Record<string, string> = {};
+  @observable.ref edgeWithArrowMappings: Record<string, boolean> = {};
+  @observable.ref edgeThicknessMappings: Record<string, string> = {};
+  @observable.ref edgeWritingMappings: Record<string, string[]> = {};
+
   @observable currentDrawer: DrawerTypes = '';
   @observable currentSelected = '';
   @observable isNodeOrEdgeClicked = false;
@@ -48,15 +54,48 @@ export class GraphViewStore {
     if (this.originalGraphViewData === null) {
       return [];
     }
+    let cloneVertices = cloneDeep(this.originalGraphViewData.vertices);
+    cloneVertices.push({
+      id: 'hiddenNodeOne',
+      label: 'hiddenNodeLabelOne',
+      properties: {},
+      primary_keys: [],
+      style: { size: 'HUGE' }
+    });
+    cloneVertices.push({
+      id: 'hiddenNodeTwo',
+      label: 'hiddenNodeLabelTwo',
+      properties: {},
+      primary_keys: [],
+      style: { size: 'HUGE' }
+    });
+    cloneVertices.push({
+      id: 'hiddenNodeThree',
+      label: 'hiddenNodeLabelThree',
+      properties: {},
+      primary_keys: [],
+      style: { size: 'TINY' }
+    });
 
-    return this.originalGraphViewData.vertices.map(
-      ({ id, label, properties, primary_keys }) => {
-        return {
-          id,
-          label: id.length <= 15 ? id : id.slice(0, 15) + '...',
-          vLabel: label,
-          properties,
-          title: `
+    return cloneVertices.map(({ id, label, properties, primary_keys }) => {
+      return {
+        id,
+        label: id,
+        vLabel: id.length <= 15 ? id : id.slice(0, 15) + '...',
+        value:
+          this.vertexSizeMappings[label] === 'HUGE' || id === 'hiddenNodeOne'
+            ? 40
+            : this.vertexSizeMappings[label] === 'BIG'
+            ? 30
+            : this.vertexSizeMappings[label] === 'NORMAL'
+            ? 20
+            : this.vertexSizeMappings[label] === 'SMALL'
+            ? 10
+            : 1,
+        font: { size: 16 },
+        properties,
+        primary_keys,
+        title: `
             <div class="metadata-graph-view-tooltip-fields">
               <div>顶点类型：</div>
               <div style="min-width: 60px; max-width: 145px; marigin-right: 0">${label}</div>
@@ -87,52 +126,80 @@ export class GraphViewStore {
               })
               .join('')}
           `,
-          color: {
-            background: this.colorMappings[label] || '#5c73e6',
-            border: this.colorMappings[label] || '#5c73e6',
-            highlight: { background: '#fb6a02', border: '#fb6a02' },
-            hover: { background: '#ec3112', border: '#ec3112' }
-          },
-          chosen: {
-            node(
-              values: any,
-              id: string,
-              selected: boolean,
-              hovering: boolean
-            ) {
-              if (hovering || selected) {
-                values.shadow = true;
-                values.shadowColor = 'rgba(0, 0, 0, 0.6)';
-                values.shadowX = 0;
-                values.shadowY = 0;
-                values.shadowSize = 25;
-              }
+        hidden:
+          id !== 'hiddenNodeOne' &&
+          id !== 'hiddenNodeTwo' &&
+          id !== 'hiddenNodeThree'
+            ? false
+            : true,
+        color: {
+          background: this.colorMappings[label] || '#5c73e6',
+          border: this.colorMappings[label] || '#5c73e6',
+          highlight: { background: '#fb6a02', border: '#fb6a02' },
+          hover: { background: '#ec3112', border: '#ec3112' }
+        },
+        chosen: {
+          node(values: any, id: string, selected: boolean, hovering: boolean) {
+            if (hovering || selected) {
+              values.shadow = true;
+              values.shadowColor = 'rgba(0, 0, 0, 0.6)';
+              values.shadowX = 0;
+              values.shadowY = 0;
+              values.shadowSize = 25;
+            }
 
-              if (selected) {
-                values.size = 30;
-              }
+            if (selected) {
+              values.size += 5;
             }
           }
-        };
-      }
-    );
+        }
+      };
+    });
   }
 
   @computed get graphEdges() {
     if (this.originalGraphViewData === null) {
       return [];
     }
+    let cloneEdges = cloneDeep(this.originalGraphViewData.edges);
+    cloneEdges.push({
+      id: 'hiddenEdgeOne',
+      label: 'hiddenEdgeLabelOne',
+      source: 'hiddenNodeOne',
+      properties: {},
+      target: 'hiddenNodeTwo',
+      sort_keys: []
+    });
+    cloneEdges.push({
+      id: 'hiddenEdgeTwo',
+      label: 'hiddenEdgeLabelTwo',
+      source: 'hiddenNodeTwo',
+      properties: {},
+      target: 'hiddenNodeThree',
+      sort_keys: []
+    });
 
-    return this.originalGraphViewData.edges.map(
+    return cloneEdges.map(
       ({ id, label, source, target, properties, sort_keys }) => {
         return {
           id,
           label,
+          properties,
+          source,
+          target,
           from: source,
           to: target,
-          font: {
-            color: '#666'
-          },
+          sort_keys,
+          font: { size: 16, strokeWidth: 0, color: '#666' },
+          arrows: this.edgeWithArrowMappings[label] === true ? 'to' : '',
+          value:
+            this.edgeThicknessMappings[label] === 'THICK'
+              ? 45
+              : this.edgeThicknessMappings[label] === 'NORMAL'
+              ? 20
+              : id === 'hiddenEdgeOne'
+              ? 45
+              : -10,
           title: `
           <div class="metadata-graph-view-tooltip-fields">
             <div>边类型：</div>
@@ -199,6 +266,7 @@ export class GraphViewStore {
 
   @action
   dispose() {
+    this.edgeColorMappings = {};
     this.currentDrawer = '';
     this.currentSelected = '';
     this.colorMappings = {};
@@ -224,16 +292,35 @@ export class GraphViewStore {
   fetchGraphViewData = flow(function* fetchGraphViewData(
     this: GraphViewStore,
     colorMappings?: Record<string, string>,
-    edgeColorMappings?: Record<string, string>
+    vertexSizeMappings?: Record<string, string>,
+    vertexWritingMappings?: Record<string, string[]>,
+    edgeColorMappings?: Record<string, string>,
+    edgeThicknessMappings?: Record<string, string>,
+    edgeWithArrowMappings?: Record<string, boolean>,
+    edgeWritingMappings?: Record<string, string[]>
   ) {
     this.requestStatus.fetchGraphViewData = 'pending';
 
     if (!isUndefined(colorMappings)) {
       this.colorMappings = colorMappings;
     }
-
+    if (!isUndefined(vertexSizeMappings)) {
+      this.vertexSizeMappings = vertexSizeMappings;
+    }
+    if (!isUndefined(vertexWritingMappings)) {
+      this.vertexWritingMappings = vertexWritingMappings;
+    }
     if (!isUndefined(edgeColorMappings)) {
       this.edgeColorMappings = edgeColorMappings;
+    }
+    if (!isUndefined(edgeThicknessMappings)) {
+      this.edgeThicknessMappings = edgeThicknessMappings;
+    }
+    if (!isUndefined(edgeWithArrowMappings)) {
+      this.edgeWithArrowMappings = edgeWithArrowMappings;
+    }
+    if (!isUndefined(edgeWritingMappings)) {
+      this.edgeWritingMappings = edgeWritingMappings;
     }
 
     try {

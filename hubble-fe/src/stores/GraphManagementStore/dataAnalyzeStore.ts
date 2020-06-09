@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { observable, action, flow, computed, runInAction } from 'mobx';
 import axios, { AxiosResponse } from 'axios';
-import { isUndefined } from 'lodash-es';
+import { isUndefined, cloneDeep, clone } from 'lodash-es';
 
 import {
   GraphData,
@@ -64,13 +64,20 @@ export class DataAnalyzeStore {
   // Mutate this variable to let mobx#reaction fires it's callback and set value for CodeEditor
   @observable pulse = false;
 
+  @observable nodeCount = 0;
+
   // datas
   @observable.ref idList: { id: number; name: string }[] = [];
   @observable.ref valueTypes: Record<string, string> = {};
   @observable.ref colorSchemas: ColorSchemas = {};
   @observable.ref colorList: string[] = [];
   @observable.ref colorMappings: Record<string, string> = {};
+  @observable.ref vertexSizeMappings: Record<string, string> = {};
+  @observable.ref vertexWritingMappings: Record<string, string[]> = {};
   @observable.ref edgeColorMappings: Record<string, string> = {};
+  @observable.ref edgeWithArrowMappings: Record<string, boolean> = {};
+  @observable.ref edgeThicknessMappings: Record<string, string> = {};
+  @observable.ref edgeWritingMappings: Record<string, string[]> = {};
   @observable.ref
   originalGraphData: FetchGraphReponse = {} as FetchGraphReponse;
   @observable.ref graphData: FetchGraphReponse = {} as FetchGraphReponse;
@@ -141,8 +148,8 @@ export class DataAnalyzeStore {
     fetchValueTypes: 'standby',
     fetchColorSchemas: 'standby',
     fetchColorList: 'standby',
-    fetchAllNodeColors: 'standby',
-    fetchAllEdgeColors: 'standby',
+    fetchAllNodeStyle: 'standby',
+    fetchAllEdgeStyle: 'standby',
     fetchGraphs: 'standby',
     expandGraphNode: 'standby',
     filteredGraphData: 'standby',
@@ -172,11 +179,11 @@ export class DataAnalyzeStore {
       code: NaN,
       message: ''
     },
-    fetchAllNodeColors: {
+    fetchAllNodeStyle: {
       code: NaN,
       message: ''
     },
-    fetchAllEdgeColors: {
+    fetchAllEdgeStyle: {
       code: NaN,
       message: ''
     },
@@ -223,14 +230,78 @@ export class DataAnalyzeStore {
   };
 
   @computed get graphNodes(): GraphNode[] {
-    return this.originalGraphData.data.graph_view.vertices.map(
-      ({ id, label, properties }) => {
-        return {
-          id,
-          label: id.length <= 15 ? id : id.slice(0, 15) + '...',
-          vLabel: label,
-          properties,
-          title: `
+    let cloneVertices = cloneDeep(
+      this.originalGraphData.data.graph_view.vertices
+    );
+    cloneVertices.push({
+      id: 'hiddenNodeOne',
+      label: 'hiddenNodeLabelOne',
+      properties: {},
+      style: { size: 'HUGE' }
+    });
+    cloneVertices.push({
+      id: 'hiddenNodeTwo',
+      label: 'hiddenNodeLabelTwo',
+      properties: {},
+      style: { size: 'HUGE' }
+    });
+    cloneVertices.push({
+      id: 'hiddenNodeThree',
+      label: 'hiddenNodeLabelThree',
+      properties: {},
+      style: { size: 'TINY' }
+    });
+
+    this.nodeCount = 0;
+    return cloneVertices.map(({ id, label, properties }) => {
+      this.nodeCount++;
+      let cloneProperties = cloneDeep(properties);
+      cloneProperties['顶点ID'] = id;
+      let labelWords = '';
+      let flag = true;
+      if (
+        id !== 'hiddenNodeOne' &&
+        id !== 'hiddenNodeTwo' &&
+        id !== 'hiddenNodeThree'
+      ) {
+        let arr = Object.entries(this.vertexWritingMappings[label]).map(
+          ([key, value]) => {
+            return value;
+          }
+        );
+
+        for (let item of arr) {
+          if (cloneProperties[item]) {
+            if (flag) {
+              labelWords += cloneProperties[item];
+              flag = false;
+              continue;
+            }
+            labelWords += '-' + cloneProperties[item];
+          }
+        }
+      }
+
+      return {
+        id,
+        label:
+          labelWords.length <= 15
+            ? labelWords
+            : labelWords.slice(0, 15) + '...',
+        vLabel: id.length <= 15 ? id : id.slice(0, 15) + '...',
+        value:
+          this.vertexSizeMappings[label] === 'HUGE' || id === 'hiddenNodeOne'
+            ? 40
+            : this.vertexSizeMappings[label] === 'BIG'
+            ? 30
+            : this.vertexSizeMappings[label] === 'NORMAL'
+            ? 20
+            : this.vertexSizeMappings[label] === 'SMALL'
+            ? 10
+            : 1,
+        font: { size: 16 },
+        properties,
+        title: `
               <div class="tooltip-fields">
                 <div>顶点类型：</div>
                 <div>${label}</div>
@@ -248,64 +319,119 @@ export class DataAnalyzeStore {
                 })
                 .join('')}
           `,
-          color: {
-            background: this.colorMappings[label] || '#5c73e6',
-            border: this.colorMappings[label] || '#5c73e6',
-            highlight: { background: '#fb6a02', border: '#fb6a02' },
-            hover: { background: '#ec3112', border: '#ec3112' }
-          },
-          chosen: {
-            node(
-              values: any,
-              id: string,
-              selected: boolean,
-              hovering: boolean
-            ) {
-              if (hovering || selected) {
-                values.shadow = true;
-                values.shadowColor = 'rgba(0, 0, 0, 0.6)';
-                values.shadowX = 0;
-                values.shadowY = 0;
-                values.shadowSize = 25;
-              }
+        hidden:
+          id !== 'hiddenNodeOne' &&
+          id !== 'hiddenNodeTwo' &&
+          id !== 'hiddenNodeThree'
+            ? false
+            : true,
+        color: {
+          background: this.colorMappings[label] || '#5c73e6',
+          border: this.colorMappings[label] || '#5c73e6',
+          highlight: { background: '#fb6a02', border: '#fb6a02' },
+          hover: { background: '#ec3112', border: '#ec3112' }
+        },
+        chosen: {
+          node(values: any, id: string, selected: boolean, hovering: boolean) {
+            if (hovering || selected) {
+              values.shadow = true;
+              values.shadowColor = 'rgba(0, 0, 0, 0.6)';
+              values.shadowX = 0;
+              values.shadowY = 0;
+              values.shadowSize = 25;
+            }
 
-              if (selected) {
-                values.size = 30;
-              }
+            if (selected) {
+              values.size += 5;
             }
           }
-        };
-      }
-    );
+        }
+      };
+    });
   }
 
   @computed get graphEdges(): GraphEdge[] {
-    return this.originalGraphData.data.graph_view.edges.map(edge => ({
-      ...edge,
-      from: edge.source,
-      to: edge.target,
-      font: {
-        color: '#666'
-      },
-      title: `
-        <div class="tooltip-fields">
-          <div>边类型：</div>
-          <div>${edge.label}</div>
-        </div>
-        <div class="tooltip-fields">
-          <div>边ID：</div>
-          <div>${edge.id}</div>
-        </div>
-        ${Object.entries(edge.properties)
-          .map(([key, value]) => {
-            return `<div class="tooltip-fields">
-                      <div>${key}: </div>
-                      <div>${value}</div>
-                    </div>`;
-          })
-          .join('')}
-      `
-    }));
+    let cloneEdges = cloneDeep(this.originalGraphData.data.graph_view.edges);
+    cloneEdges.push({
+      id: 'hiddenEdgeOne',
+      label: 'hiddenEdgeLabelOne',
+      source: 'hiddenNodeOne',
+      properties: {},
+      target: 'hiddenNodeTwo'
+    });
+    cloneEdges.push({
+      id: 'hiddenEdgeTwo',
+      label: 'hiddenEdgeLabelTwo',
+      source: 'hiddenNodeTwo',
+      properties: {},
+      target: 'hiddenNodeThree'
+    });
+
+    return cloneEdges.map(({ id, label, source, target, properties }) => {
+      let cloneProperties = cloneDeep(properties);
+      cloneProperties['边类型'] = label;
+      let labelWords = '';
+      let flag = true;
+      if (id !== 'hiddenEdgeOne' && id !== 'hiddenEdgeTwo') {
+        let arr = Object.entries(this.edgeWritingMappings[label]).map(
+          ([key, value]) => {
+            return value;
+          }
+        );
+        for (let item of arr) {
+          if (cloneProperties[item]) {
+            if (flag) {
+              labelWords += cloneProperties[item];
+              flag = false;
+              continue;
+            }
+            labelWords += '-' + cloneProperties[item];
+          }
+        }
+      }
+
+      return {
+        id,
+        label:
+          labelWords.length <= 15
+            ? labelWords
+            : labelWords.slice(0, 15) + '...',
+        properties,
+        source,
+        target,
+        from: source,
+        to: target,
+        font: { size: 16, strokeWidth: 0, color: '#666' },
+        arrows: this.edgeWithArrowMappings[label] === true ? 'to' : '',
+        color: this.edgeColorMappings[label],
+        value:
+          this.edgeThicknessMappings[label] === 'THICK'
+            ? 45
+            : this.edgeThicknessMappings[label] === 'NORMAL'
+            ? 20
+            : id === 'hiddenEdgeOne'
+            ? 45
+            : -10,
+        title: `
+                  <div class="tooltip-fields">
+                    <div>边类型：</div>
+                  <div>${label}</div>
+                  </div>
+                  <div class="tooltip-fields">
+                    <div>边ID：</div>
+                    <div>${id}</div>
+                  </div>
+                ${Object.entries(properties)
+                  .map(([key, value]) => {
+                    return `<div class="tooltip-fields">
+                                <div>${key}: </div>
+                                <div>${value}</div>
+                              </div>`;
+                  })
+                  .join('')}
+                `
+      };
+    });
   }
 
   @action
@@ -546,8 +672,8 @@ export class DataAnalyzeStore {
       fetchColorSchemas: 'standby',
       fetchColorList: 'standby',
       fetchGraphs: 'standby',
-      fetchAllNodeColors: 'standby',
-      fetchAllEdgeColors: 'standby',
+      fetchAllNodeStyle: 'standby',
+      fetchAllEdgeStyle: 'standby',
       expandGraphNode: 'standby',
       filteredGraphData: 'standby',
       fetchRelatedVertex: 'standby',
@@ -576,11 +702,11 @@ export class DataAnalyzeStore {
         code: NaN,
         message: ''
       },
-      fetchAllNodeColors: {
+      fetchAllNodeStyle: {
         code: NaN,
         message: ''
       },
-      fetchAllEdgeColors: {
+      fetchAllEdgeStyle: {
         code: NaN,
         message: ''
       },
@@ -740,15 +866,12 @@ export class DataAnalyzeStore {
     }
   });
 
-  fetchAllNodeColors = flow(function* fetchAllNodeColors(
-    this: DataAnalyzeStore
-  ) {
-    this.requestStatus.fetchAllNodeColors = 'pending';
-
+  fetchAllNodeStyle = flow(function* fetchAllNodeStyle(this: DataAnalyzeStore) {
+    this.requestStatus.fetchAllNodeStyle = 'pending';
     try {
-      const result: AxiosResponse<
-        responseData<VertexTypeListResponse>
-      > = yield axios.get(`${baseUrl}/${this.currentId}/schema/vertexlabels`, {
+      const result: AxiosResponse<responseData<
+        VertexTypeListResponse
+      >> = yield axios.get(`${baseUrl}/${this.currentId}/schema/vertexlabels`, {
         params: {
           page_no: 1,
           page_size: -1
@@ -763,25 +886,34 @@ export class DataAnalyzeStore {
         if (style.color !== null) {
           this.colorMappings[name] = style.color;
         }
+        if (style.size !== null) {
+          this.vertexSizeMappings[name] = style.size;
+        }
+        if (style.display_fields.length !== 0) {
+          for (let i = 0; i < style.display_fields.length; i++) {
+            if (style.display_fields[i] === '~id') {
+              style.display_fields[i] = '顶点ID';
+            }
+          }
+          this.vertexWritingMappings[name] = style.display_fields;
+        }
       });
 
-      this.requestStatus.fetchAllNodeColors = 'success';
+      this.requestStatus.fetchAllNodeStyle = 'success';
     } catch (error) {
-      this.requestStatus.fetchAllNodeColors = 'failed';
-      this.errorInfo.fetchAllNodeColors.message = error.message;
+      this.requestStatus.fetchAllNodeStyle = 'failed';
+      this.errorInfo.fetchAllNodeStyle.message = error.message;
       console.error(error.message);
     }
   });
 
-  fetchAllEdgeColors = flow(function* fetchAllEdgeColors(
-    this: DataAnalyzeStore
-  ) {
-    this.requestStatus.fetchAllEdgeColors = 'pending';
+  fetchAllEdgeStyle = flow(function* fetchAllEdgeStyle(this: DataAnalyzeStore) {
+    this.requestStatus.fetchAllEdgeStyle = 'pending';
 
     try {
-      const result: AxiosResponse<
-        responseData<EdgeTypeListResponse>
-      > = yield axios.get(`${baseUrl}/${this.currentId}/schema/edgelabels`, {
+      const result: AxiosResponse<responseData<
+        EdgeTypeListResponse
+      >> = yield axios.get(`${baseUrl}/${this.currentId}/schema/edgelabels`, {
         params: {
           page_no: 1,
           page_size: -1
@@ -796,12 +928,26 @@ export class DataAnalyzeStore {
         if (style.color !== null) {
           this.edgeColorMappings[name] = style.color;
         }
+        if (style.with_arrow !== null) {
+          this.edgeWithArrowMappings[name] = style.with_arrow;
+        }
+        if (style.thickness !== null) {
+          this.edgeThicknessMappings[name] = style.thickness;
+        }
+        if (style.display_fields.length !== 0) {
+          for (let i = 0; i < style.display_fields.length; i++) {
+            if (style.display_fields[i] === '~id') {
+              style.display_fields[i] = '边类型';
+            }
+          }
+          this.edgeWritingMappings[name] = style.display_fields;
+        }
       });
 
-      this.requestStatus.fetchAllEdgeColors = 'success';
+      this.requestStatus.fetchAllEdgeStyle = 'success';
     } catch (error) {
-      this.requestStatus.fetchAllEdgeColors = 'failed';
-      this.errorInfo.fetchAllEdgeColors.message = error.message;
+      this.requestStatus.fetchAllEdgeStyle = 'failed';
+      this.errorInfo.fetchAllEdgeStyle.message = error.message;
       console.error(error.message);
     }
   });
@@ -999,9 +1145,7 @@ export class DataAnalyzeStore {
     this.requestStatus.fetchFilteredPropertyOptions = 'pending';
 
     try {
-      const result: AxiosResponse<
-        FetchFilteredPropertyOptions
-      > = yield axios.get(
+      const result: AxiosResponse<FetchFilteredPropertyOptions> = yield axios.get(
         `${baseUrl}/${this.currentId}/schema/edgelabels/${edgeName}`
       );
 

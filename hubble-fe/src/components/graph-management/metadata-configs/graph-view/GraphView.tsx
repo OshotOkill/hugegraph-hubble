@@ -182,7 +182,12 @@ const GraphDataView: React.FC = observer(() => {
   useEffect(() => {
     graphViewStore.fetchGraphViewData(
       dataAnalyzeStore.colorMappings,
-      dataAnalyzeStore.edgeColorMappings
+      dataAnalyzeStore.vertexSizeMappings,
+      dataAnalyzeStore.vertexWritingMappings,
+      dataAnalyzeStore.edgeColorMappings,
+      dataAnalyzeStore.edgeThicknessMappings,
+      dataAnalyzeStore.edgeWithArrowMappings,
+      dataAnalyzeStore.edgeWritingMappings
     );
 
     return () => {
@@ -190,7 +195,12 @@ const GraphDataView: React.FC = observer(() => {
     };
   }, [
     dataAnalyzeStore.colorMappings,
+    dataAnalyzeStore.vertexSizeMappings,
+    dataAnalyzeStore.vertexWritingMappings,
     dataAnalyzeStore.edgeColorMappings,
+    dataAnalyzeStore.edgeThicknessMappings,
+    dataAnalyzeStore.edgeWithArrowMappings,
+    dataAnalyzeStore.edgeWritingMappings,
     graphViewStore
   ]);
 
@@ -209,13 +219,18 @@ const GraphDataView: React.FC = observer(() => {
           shape: 'dot'
         },
         edges: {
-          arrows: 'to',
           arrowStrikethrough: false,
-          width: 1.5,
           color: {
             color: 'rgba(92, 115, 230, 0.8)',
             hover: 'rgba(92, 115, 230, 1)',
             highlight: 'rgba(92, 115, 230, 1)'
+          },
+          scaling: {
+            min: 1,
+            max: 3,
+            label: {
+              enabled: false
+            }
           }
         },
         interaction: {
