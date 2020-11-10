@@ -357,9 +357,11 @@ export class AlgorithmAnalyzerStore {
   @action
   mutateShortestPathAllParams<T extends keyof ShortestPathAllAlgorithmParams>(
     key: T,
-    value: ShortestPathAlgorithmParams[T]
+    value: ShortestPathAlgorithmParams[T] | undefined
   ) {
-    this.shortestPathAllParams[key] = value;
+    if (typeof value !== 'undefined') {
+      this.shortestPathAllParams[key] = value;
+    }
   }
 
   @action
@@ -449,9 +451,11 @@ export class AlgorithmAnalyzerStore {
   @action
   mutateAllPathParams<T extends keyof AllPathAlgorithmParams>(
     key: T,
-    value: AllPathAlgorithmParams[T]
+    value: AllPathAlgorithmParams[T] | undefined
   ) {
-    this.allPathParams[key] = value;
+    if (typeof value !== 'undefined') {
+      this.allPathParams[key] = value;
+    }
   }
 
   @action

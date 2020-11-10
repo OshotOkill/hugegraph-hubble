@@ -39,6 +39,10 @@ const App: React.FC = () => {
           component={AsyncTaskResult}
         />
         <Route
+          path="/graph-management/:id/data-analyze/algorithm/:parmas*"
+          component={DataAnalyze}
+        />
+        <Route
           path="/graph-management/:id/data-analyze"
           component={DataAnalyze}
         />
